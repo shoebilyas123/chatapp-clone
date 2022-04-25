@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Dispatch } from "react";
 import { ILoginPayload } from "../../API/auth";
+import { URL_Common } from "../../API/common";
 import { IAuthState, IReduxAction } from "../../Interface/redux";
 import {
   LOGIN_FAIL,
@@ -14,7 +15,7 @@ export const login =
   async (dispatch: Dispatch<IReduxAction<IAuthState>>) => {
     try {
       dispatch({ type: LOGIN_REQUEST });
-      const result = await axios.post("/auth/login", userPayload);
+      const result = await axios.post(`${URL_Common}/auth/login`, userPayload);
       dispatch({ type: LOGIN_SUCCESS, payload: result.data });
       localStorage.setItem("userInfo", JSON.stringify(result.data));
     } catch (error) {
