@@ -3,6 +3,7 @@ export interface IAuthData {
   email: string;
   profilePic: string;
   accessToken: string;
+  id: string;
 }
 
 export interface IReduxAction<P> {

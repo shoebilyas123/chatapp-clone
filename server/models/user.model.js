@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     minlength: 5,
+    unique: true,
     required: [true, "User must have a name"],
   },
   email: { type: String, required: [true, "User must have an email"] },
@@ -14,6 +15,9 @@ const userSchema = new mongoose.Schema({
     required: [true, "User must have a password"],
   },
   profilePic: { type: String, default: "" },
+  friends: [{ id: mongoose.Types.ObjectId }],
+  pendingRequests: [{ from: { name: String, id: mongoose.Types.ObjectId } }],
+  sentRequests: [{ to: mongoose.Types.ObjectId }],
 });
 
 userSchema.pre("save", async function (next) {

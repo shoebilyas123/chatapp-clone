@@ -29,6 +29,7 @@ exports.register = async (req, res) => {
       email: newUser.email,
       profilePic: newUser.profilePic,
       accessToken,
+      id: newUser._id,
     });
   } catch (error) {
     console.log(error);
@@ -65,6 +66,7 @@ exports.login = async (req, res) => {
       email: user.email,
       profilePic: user.profilePic,
       accessToken,
+      id: user._id,
     });
   } catch (error) {
     console.log(error);
