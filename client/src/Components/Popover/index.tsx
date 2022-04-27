@@ -33,8 +33,13 @@ const Popover: React.FC<IProps> = ({
     </BootstrapPopover>
   );
   return (
-    <OverlayTrigger trigger="click" placement={placement} overlay={popover}>
-      <Button variant={variant}>{icon}</Button>
+    <OverlayTrigger
+      rootClose
+      trigger="click"
+      placement={placement}
+      overlay={popover}
+    >
+      <div className="p-2">{icon}</div>
     </OverlayTrigger>
   );
 };

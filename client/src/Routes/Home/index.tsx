@@ -9,6 +9,7 @@ import {
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import DefaultAvatar from "../../Components/DefaultAvatar";
 import Navbar from "../../Components/Navbar";
 import { IGlobalState } from "../../Interface/redux";
 import { logout } from "../../Store/Actions/auth";
@@ -16,6 +17,7 @@ import { logout } from "../../Store/Actions/auth";
 interface IUserList {
   name: string;
   email: string;
+  avatarColor: string;
   _id: string;
 }
 
@@ -54,12 +56,17 @@ const Home = () => {
       };
 
       const { data } = await axios.get(
-        `/api/v1/users?search=${search}`,
+        `/api/v1/users?search=${search}&forFR=true`,
         config
       );
 
       setUserList(
-        data.map((d: any) => ({ name: d.name, email: d.email, _id: d._id }))
+        data.map((user: any) => ({
+          name: user.name,
+          email: user.email,
+          _id: user._id,
+          avatarColor: user.avatarColor,
+        }))
       );
     } catch (error) {
       console.log(error);
@@ -78,7 +85,7 @@ const Home = () => {
         `/api/v1/users/invite`,
         {
           to: id,
-          from: { name: userInfo.name, id: userInfo.id },
+          from: userInfo.id,
         },
         config
       );
@@ -118,7 +125,13 @@ const Home = () => {
                 key={user._id}
                 className="d-flex justify-content-between"
               >
-                {user.name}
+                <div className="d-flex align-items-center">
+                  <DefaultAvatar
+                    color={user.avatarColor || ""}
+                    text={user.name.slice(0, 1).toUpperCase()}
+                  />{" "}
+                  <p className="ml-2 mb-0">{user.name}</p>
+                </div>
                 <Button size="sm" onClick={() => inviteUserHandler(user._id)}>
                   Invite
                 </Button>

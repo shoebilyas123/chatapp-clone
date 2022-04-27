@@ -1,4 +1,5 @@
 const { signToken } = require("../utils/auth");
+const { generateAvatarColor } = require("../utils/generics");
 const User = require("./../models/user.model");
 
 exports.register = async (req, res) => {
@@ -16,18 +17,21 @@ exports.register = async (req, res) => {
     if (user) {
       res.status(400).json({ message: "User already exists. Please log in." });
     }
-
-    const newUser = await User.create({
+    const payload = {
       name,
       email,
       password,
       profilePic: profilePic || "",
-    });
+      avatarColor: generateAvatarColor(),
+    };
+
+    const newUser = await User.create(payload);
     const accessToken = signToken(newUser._id);
     res.status(201).json({
       name: newUser.name,
       email: newUser.email,
       profilePic: newUser.profilePic,
+      avatarColor: newUser.avatarColor,
       accessToken,
       id: newUser._id,
     });
@@ -65,6 +69,7 @@ exports.login = async (req, res) => {
       name: user.name,
       email: user.email,
       profilePic: user.profilePic,
+      avatarColor: user.avatarColor,
       accessToken,
       id: user._id,
     });

@@ -4,5 +4,6 @@ const { protect } = require("../middleware/auth");
 
 router.get("/", protect, UserController.getAllUsers);
 router.post("/invite", protect, UserController.inviteUser);
+router.get("/friends", protect, UserController.getFriendsInfo);
 
 module.exports = router;
