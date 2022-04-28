@@ -25,19 +25,17 @@ interface IState {
 const Login = () => {
   const [email, setEmail] = React.useState<IState["email"]>("");
   const [password, setPassword] = React.useState<IState["password"]>("");
-  // const [rememberMe, setRememberMe] =
-  //   React.useState<IState["rememberMe"]>(true);
-  const { userInfo, loading } = useSelector(
+  const { userAccessToken, loading } = useSelector(
     (state: IGlobalState) => state.userLogin
   );
   const dispatch: Dispatch<any> = useDispatch();
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (userInfo) {
+    if (userAccessToken) {
       navigate("/");
     }
-  }, [userInfo]);
+  }, [userAccessToken]);
 
   const loginHandler = () => {
     dispatch(login({ email, password }));
@@ -91,18 +89,11 @@ const Login = () => {
                     }
                   />
                 </Form.Group>
-                {/* <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                  <Form.Check
-                    type="checkbox"
-                    checked={rememberMe}
-                    label="Remember Me"
-                    onChange={() => setRememberMe((prev) => !prev)}
-                  />
-                </Form.Group> */}
+
                 <Button variant="primary" onClick={loginHandler} size="sm">
                   <div className="d-flex align-items-center">
                     {loading && <Spinner animation="grow" size="sm" />}
-                    Continue
+                    <p className="mb-0">Continue</p>
                   </div>
                 </Button>
               </Form>

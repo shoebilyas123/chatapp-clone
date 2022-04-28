@@ -34,11 +34,12 @@ exports.inviteUser = async (req, res) => {
       $push: { sentRequests: to },
     };
 
-    console.log({ from, to, user: req.user });
-    await User.findByIdAndUpdate(to, optionsTo);
+    const user = await User.findByIdAndUpdate(to, optionsTo).select(
+      "name profilePic avatarColor _id"
+    );
     await User.findByIdAndUpdate(req.user._id, optionsFrom);
 
-    res.status(200).json({ success: true });
+    res.status(200).json({ sent: user });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Something went wrong", success: false });

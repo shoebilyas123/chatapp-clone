@@ -66,18 +66,40 @@ exports.login = async (req, res) => {
 
     const accessToken = signToken(user._id);
     res.status(201).json({
-      name: user.name,
-      email: user.email,
-      profilePic: user.profilePic,
-      avatarColor: user.avatarColor,
+      userInfo: user,
       accessToken,
-      id: user._id,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Something went wrong." });
   }
 };
+
+exports.getCurrentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .populate({
+        path: "sentRequests",
+        select: "name avatarColor _id profilePic",
+      })
+      .populate({
+        path: "pendingRequests",
+        select: "name avatarColor _id profilePic",
+      });
+    if (!user) {
+      res
+        .status(404)
+        .json({ messag: "User has either been deleted or does not exist." });
+      return;
+    }
+
+    res.status(201).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
 exports.changePassword = async (req, res) => {
   try {
     res.send("hello");

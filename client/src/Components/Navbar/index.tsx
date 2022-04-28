@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Navbar as BootstrapNavbar,
   Container,
@@ -6,42 +6,21 @@ import {
   Nav,
   Row,
   ListGroup,
+  Spinner,
+  Card,
 } from "react-bootstrap";
 import { FiRefreshCcw, FiSend } from "react-icons/fi";
 import { BsPeopleFill } from "react-icons/bs";
 import Logo from "../Logo";
 import Popover from "../Popover";
 import { useSelector } from "react-redux";
-import { IGlobalState } from "../../Interface/redux";
-import axios from "axios";
+import { IAuthData, IGlobalState, IFRRequests } from "../../Interface/redux";
 import DefaultAvatar from "../DefaultAvatar";
 
 const Navbar = () => {
-  const { userInfo } = useSelector((state: IGlobalState) => state.userLogin);
-  const [sentRequests, setSentRequests] = React.useState<any>([]);
-  const [requests, setRequests] = React.useState<any>([]);
-
-  const getFriendsInfo = async () => {
-    try {
-      const config = {
-        headers: {
-          authorization: `Bearer ${userInfo.accessToken}`,
-        },
-      };
-
-      const { data } = await axios.get("/api/v1/users/friends", config);
-
-      setSentRequests(data.sentRequests);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  React.useEffect(() => {
-    if (sentRequests === 0 || requests.length === 0) {
-      getFriendsInfo();
-    }
-  }, []);
+  const { userAccessToken, userInfo, loading } = useSelector(
+    (state: IGlobalState) => state.userLogin
+  );
   return (
     <BootstrapNavbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
@@ -55,27 +34,33 @@ const Navbar = () => {
                 title="Requests"
                 width={"240px"}
                 className="p-0"
+                placement="bottom"
                 content={
-                  <ListGroup>
-                    <ListGroup.Item>
-                      <div className="d-flex align-items-center justify-content-between">
-                        <p className="mb-0">Name 1</p>
-                        <Button size="sm">Accept</Button>
-                      </div>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <div className="d-flex align-items-center justify-content-between">
-                        <p className="mb-0">Name 1</p>
-                        <Button size="sm">Accept</Button>
-                      </div>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <div className="d-flex align-items-center justify-content-between">
-                        <p className="mb-0">Name 1</p>
-                        <Button size="sm">Accept</Button>
-                      </div>
-                    </ListGroup.Item>
-                  </ListGroup>
+                  <>
+                    {userInfo?.pendingRequests.length > 0 ? (
+                      <ListGroup>
+                        {userInfo?.pendingRequests.map(
+                          (pending: IFRRequests) => (
+                            <ListGroup.Item>
+                              <div className="d-flex align-items-center justify-content-between">
+                                <p className="mb-0">{pending.name}</p>
+                                <Button size="sm">Accept</Button>
+                              </div>
+                            </ListGroup.Item>
+                          )
+                        )}
+                      </ListGroup>
+                    ) : (
+                      <Container style={{ width: "100%", height: "150px" }}>
+                        <div
+                          className="d-flex align-items-center justify-content-center"
+                          style={{ height: "100%" }}
+                        >
+                          <p>No Pending Requests</p>
+                        </div>
+                      </Container>
+                    )}
+                  </>
                 }
                 icon={<BsPeopleFill color="white" />}
               />
@@ -85,23 +70,15 @@ const Navbar = () => {
                 title={
                   <div className="d-flex align-items-center justify-content-between">
                     Sent
-                    <Button variant="secondary" size="sm">
-                      <FiRefreshCcw onClick={getFriendsInfo} />
-                    </Button>
                   </div>
                 }
                 width={"240px"}
                 className="p-0"
                 content={
-                  <ListGroup>
-                    {sentRequests.length > 0 &&
-                      sentRequests.map(
-                        (request: {
-                          name: string;
-                          profilePic: string;
-                          avatarColor: string;
-                          _id: string;
-                        }) => (
+                  <div>
+                    {(userInfo?.sentRequests || []).length > 0 ? (
+                      <ListGroup>
+                        {userInfo?.sentRequests.map((request: IFRRequests) => (
                           <ListGroup.Item>
                             <div className="d-flex align-items-center justify-content-between">
                               <DefaultAvatar
@@ -112,9 +89,22 @@ const Navbar = () => {
                               <Button size="sm">Unsend</Button>
                             </div>
                           </ListGroup.Item>
-                        )
-                      )}
-                  </ListGroup>
+                        ))}
+                      </ListGroup>
+                    ) : (
+                      <Container style={{ width: "100%", height: "150px" }}>
+                        <div
+                          className="d-flex align-items-center justify-content-center"
+                          style={{ height: "100%" }}
+                        >
+                          <p>No Pending Requests</p>
+                        </div>
+                      </Container>
+                    )}
+                    {!userInfo?.sentRequests && loading && (
+                      <Spinner animation="border" size="sm" />
+                    )}
+                  </div>
                 }
                 icon={<FiSend color="white" />}
               />
