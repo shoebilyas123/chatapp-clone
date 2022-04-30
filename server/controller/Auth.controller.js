@@ -85,7 +85,12 @@ exports.getCurrentUser = async (req, res) => {
       .populate({
         path: "pendingRequests",
         select: "name avatarColor _id profilePic",
+      })
+      .populate({
+        path: "friends",
+        select: "name avatarColor _id profilePic",
       });
+
     if (!user) {
       res
         .status(404)

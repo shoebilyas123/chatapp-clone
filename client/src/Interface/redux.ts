@@ -10,8 +10,8 @@ export interface IAuthData {
   email: string;
   profilePic: string;
   sentRequests: IFRRequests[];
-  pendingRequests: any;
-  friends: any;
+  pendingRequests: IFRRequests[];
+  friends: IFRRequests[];
   avatarColor: string;
   _id: string;
 }
@@ -33,6 +33,11 @@ export interface IAuthState extends IReduxStateCommon {
 
 export interface IDispatchFriends extends IReduxStateCommon {
   newSent: any;
+}
+
+export interface IAcceptInvite extends IReduxStateCommon {
+  friends: IFRRequests[];
+  pendingRequests: IFRRequests[];
 }
 
 export interface IGlobalState {

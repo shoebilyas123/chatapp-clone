@@ -1,4 +1,5 @@
 import { createStore, applyMiddleware } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import { INITIAL_USER_LOGIN } from "../DefaultValues/auth";
 import { IGlobalState } from "../Interface/redux";
@@ -10,11 +11,17 @@ const userAccessTokenFromLocalStorage = localStorage.getItem("userAccessToken")
 
 const initialState: IGlobalState = {
   userLogin: {
-    ...INITIAL_USER_LOGIN,
     userAccessToken: userAccessTokenFromLocalStorage,
+    sendingInvite: false,
+    inviteSuccess: false,
   },
 };
 
-const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+const store = createStore(
+  rootReducer,
+  // @ts-ignore
+  initialState,
+  composeWithDevTools(applyMiddleware(thunk))
+);
 export type RootState = ReturnType<typeof store.getState>;
 export default store;

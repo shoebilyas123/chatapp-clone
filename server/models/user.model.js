@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     required: [true, "User must have a password"],
   },
   profilePic: { type: String, default: "" },
-  friends: [mongoose.Types.ObjectId],
+  friends: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   pendingRequests: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   sentRequests: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   avatarColor: String,

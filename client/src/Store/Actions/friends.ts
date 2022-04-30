@@ -1,12 +1,17 @@
 import axios from "axios";
 import { Dispatch } from "react";
 import {
+  IAcceptInvite,
   IAuthState,
   IDispatchFriends,
+  IFRRequests,
   IReduxAction,
 } from "../../Interface/redux";
 import { getAuthConfig } from "../../Utilities/api";
 import {
+  ACCEPT_FR_FAIL,
+  ACCEPT_FR_REQUEST,
+  ACCEPT_FR_SUCCESS,
   SEND_FR_FAIL,
   SEND_FR_REQUEST,
   SEND_FR_SUCCESS,
@@ -43,5 +48,37 @@ export const sendInvite =
     } catch (error) {
       console.log(error);
       dispatch({ type: SEND_FR_FAIL });
+    }
+  };
+
+export const acceptInvite =
+  (acceptId: string) =>
+  async (
+    dispatch: Dispatch<IReduxAction<IAcceptInvite>>,
+    getState: () => RootState
+  ) => {
+    try {
+      dispatch({ type: ACCEPT_FR_REQUEST });
+      const {
+        userLogin: { userAccessToken },
+      } = getState();
+      const config = getAuthConfig({ token: userAccessToken || "" });
+      const payload = { acceptId };
+      const { data } = await axios.post(
+        "/api/v1/users/invite/accept",
+        payload,
+        config
+      );
+
+      dispatch({
+        type: ACCEPT_FR_SUCCESS,
+        payload: {
+          friends: data.friends,
+          pendingRequests: data.pendingRequests,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: ACCEPT_FR_FAIL });
     }
   };

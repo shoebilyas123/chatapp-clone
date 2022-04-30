@@ -46,6 +46,31 @@ exports.inviteUser = async (req, res) => {
   }
 };
 
+exports.acceptInvite = async (req, res) => {
+  try {
+    const { acceptId } = req.body;
+
+    const options = {
+      $push: { friends: acceptId },
+      $pull: { pendingRequests: acceptId },
+    };
+    const user = await User.findByIdAndUpdate(req.user._id, options)
+      .populate({ path: "friends", select: "_id name profilePic avatarColor" })
+      .select("friends pendingRequests");
+    await User.findByIdAndUpdate(acceptId, {
+      $push: { friends: req.user._id },
+      $pull: { sentRequests: req.user._id },
+    });
+
+    res
+      .status(200)
+      .json({ friends: user.friends, pendingRequests: user.pendingRequests });
+  } catch (error) {
+    console.log({ error });
+    res.status(500).json({ message: "something went wrong" });
+  }
+};
+
 exports.getFriendsInfo = async (req, res) => {
   try {
     const friendsInfo = await User.findById(req.user._id)

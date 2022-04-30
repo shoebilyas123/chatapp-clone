@@ -16,11 +16,23 @@ import {
   USER_INFO_REQUEST,
   USER_INFO_SUCCESS,
 } from "../Constants/auth";
-import { SEND_FR_REQUEST, SEND_FR_SUCCESS } from "../Constants/friends";
+import {
+  SEND_FR_REQUEST,
+  SEND_FR_SUCCESS,
+  ACCEPT_FR_REQUEST,
+  ACCEPT_FR_SUCCESS,
+  ACCEPT_FR_FAIL,
+} from "../Constants/friends";
 
 export default (
   state: IGlobalState["userLogin"] = INITIAL_USER_LOGIN,
-  action: IReduxAction<ILoginResponse & { sent?: IFRRequests }>
+  action: IReduxAction<
+    ILoginResponse & {
+      newSent?: IFRRequests;
+      friends?: IFRRequests[];
+      pendingRequests?: IFRRequests[];
+    }
+  >
 ) => {
   switch (action.type) {
     case LOGIN_REQUEST || USER_INFO_REQUEST:
@@ -46,11 +58,22 @@ export default (
           ...state.userInfo,
           sentRequests: [
             ...(state.userInfo?.sentRequests || []),
-            action.payload?.sent,
+            action.payload?.newSent,
           ],
         },
         sendingInvite: false,
         inviteSuccess: true,
+      };
+    case ACCEPT_FR_REQUEST:
+      return { ...state };
+    case ACCEPT_FR_SUCCESS:
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          pendingRequests: action.payload?.pendingRequests,
+          friends: action.payload?.friends,
+        },
       };
     case LOGOUT:
       return {};

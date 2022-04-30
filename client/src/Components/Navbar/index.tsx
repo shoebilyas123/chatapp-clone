@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { Dispatch, useEffect } from "react";
 import {
   Navbar as BootstrapNavbar,
   Container,
@@ -10,17 +10,31 @@ import {
   Card,
 } from "react-bootstrap";
 import { FiRefreshCcw, FiSend } from "react-icons/fi";
-import { BsPeopleFill } from "react-icons/bs";
-import Logo from "../Logo";
+import { BsPeopleFill, BsPlusCircle } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+
 import Popover from "../Popover";
-import { useSelector } from "react-redux";
+import Logo from "../Logo";
 import { IAuthData, IGlobalState, IFRRequests } from "../../Interface/redux";
 import DefaultAvatar from "../DefaultAvatar";
+import SearchUsers from "../SearchUsers";
+import { acceptInvite } from "../../Store/Actions/friends";
+import { getMyInfo } from "../../Store/Actions/auth";
 
 const Navbar = () => {
   const { userAccessToken, userInfo, loading } = useSelector(
     (state: IGlobalState) => state.userLogin
   );
+  const dispatch: Dispatch<any> = useDispatch();
+  const [isSearchModal, setIsSearchModal] = React.useState<boolean>(false);
+  const toggleAddUserModal = () => {
+    setIsSearchModal((prev) => !prev);
+  };
+
+  const acceptInviteHandler = (id: string) => {
+    dispatch(acceptInvite(id));
+  };
+
   return (
     <BootstrapNavbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
@@ -29,6 +43,19 @@ const Navbar = () => {
             <Logo />
           </BootstrapNavbar.Brand>
           <Nav>
+            <Nav.Item className="mr-3 mb-0 mt-2">
+              <div className="d-flex flex-row align-items-center">
+                <div className="d-flex flex-column">
+                  <div
+                    onClick={toggleAddUserModal}
+                    style={{ cursor: "pointer" }}
+                    className="mb-0 ml-2"
+                  >
+                    <BsPlusCircle color="white" />
+                  </div>
+                </div>
+              </div>
+            </Nav.Item>
             <Nav.Item>
               <Popover
                 title="Requests"
@@ -37,14 +64,22 @@ const Navbar = () => {
                 placement="bottom"
                 content={
                   <>
-                    {userInfo?.pendingRequests.length > 0 ? (
+                    {userInfo?.pendingRequests &&
+                    userInfo?.pendingRequests?.length > 0 ? (
                       <ListGroup>
                         {userInfo?.pendingRequests.map(
                           (pending: IFRRequests) => (
                             <ListGroup.Item>
                               <div className="d-flex align-items-center justify-content-between">
                                 <p className="mb-0">{pending.name}</p>
-                                <Button size="sm">Accept</Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    acceptInviteHandler(pending._id)
+                                  }
+                                >
+                                  Accept
+                                </Button>
                               </div>
                             </ListGroup.Item>
                           )
@@ -82,7 +117,7 @@ const Navbar = () => {
                           <ListGroup.Item>
                             <div className="d-flex align-items-center justify-content-between">
                               <DefaultAvatar
-                                color={request.avatarColor || ""}
+                                color={request?.avatarColor || ""}
                                 text={request?.name?.slice(0, 1).toUpperCase()}
                               />
                               <p className="mb-0">{request.name}</p>
@@ -109,8 +144,14 @@ const Navbar = () => {
                 icon={<FiSend color="white" />}
               />
             </Nav.Item>
+            <Nav.Item>
+              <Button variant="primary" size="sm" className="mb-0">
+                <FiRefreshCcw onClick={() => dispatch(getMyInfo())} />
+              </Button>
+            </Nav.Item>
           </Nav>
         </div>
+        <SearchUsers isOpen={isSearchModal} toggle={toggleAddUserModal} />
       </Container>
     </BootstrapNavbar>
   );
