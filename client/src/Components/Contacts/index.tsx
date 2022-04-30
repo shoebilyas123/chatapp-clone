@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, ListGroup } from "react-bootstrap";
+import { ListGroup } from "react-bootstrap";
 import { IFRRequests } from "../../Interface/redux";
 import ContactItem from "./ContactItem";
 interface IProps {
