@@ -22,6 +22,7 @@ import { sendInvite } from "../../Store/Actions/friends";
 import { getAuthConfig } from "../../Utilities/api";
 import Contacts from "../../Components/Contacts";
 import useData from "./data";
+import ChatBox from "../../Components/ChatBox";
 
 const Home = () => {
   const { state, toggleAddUser, reduxState } = useData();
@@ -50,7 +51,9 @@ const Home = () => {
             <Col md={4} style={{ height: "100vh", overflowY: "auto" }}>
               <Contacts contacts={userInfo?.friends || []} />
             </Col>
-            <Col md={8}></Col>
+            <Col md={8}>
+              <ChatBox />
+            </Col>
           </Row>
         </Container>
       </ScreenBox>
