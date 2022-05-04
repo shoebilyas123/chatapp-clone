@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
-import { INITIAL_USER_LOGIN } from "../DefaultValues/auth";
+import { INITIAL_USER_LOGIN } from "../DefaultValues";
 import { IGlobalState } from "../Interface/redux";
 import rootReducer from "./Reducers";
 

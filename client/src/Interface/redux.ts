@@ -1,3 +1,5 @@
+import { IChatInfo } from "./chats";
+
 export interface IFRRequests {
   name: string;
   profilePic: string;
@@ -47,4 +49,5 @@ export interface IGlobalState {
     sendingInvite: boolean;
     inviteSuccess: boolean;
   } & IReduxStateCommon;
+  chatInfo?: IChatInfo;
 }

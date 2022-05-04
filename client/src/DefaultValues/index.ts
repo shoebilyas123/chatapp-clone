@@ -15,3 +15,11 @@ export const INITIAL_USER_LOGIN: IGlobalState["userLogin"] = {
   sendingInvite: false,
   inviteSuccess: false,
 };
+
+export const INITIAL_CHAT_INFO: IGlobalState["chatInfo"] = {
+  chatHistory: [],
+  avatarColor: "",
+  profilePic: "",
+  name: "",
+  id: "",
+};

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Dispatch } from "react";
+import { IChatInfo } from "../../Interface/chats";
 import {
   IAcceptInvite,
   IAuthState,
@@ -15,6 +16,7 @@ import {
   SEND_FR_FAIL,
   SEND_FR_REQUEST,
   SEND_FR_SUCCESS,
+  SET_CHAT_INFO,
 } from "../Constants/friends";
 import { RootState } from "../store";
 
@@ -81,4 +83,9 @@ export const acceptInvite =
       console.log(error);
       dispatch({ type: ACCEPT_FR_FAIL });
     }
+  };
+
+export const setChatInfo =
+  (info: IChatInfo) => (dispatch: Dispatch<IReduxAction<IChatInfo>>) => {
+    dispatch({ type: SET_CHAT_INFO, payload: info });
   };
