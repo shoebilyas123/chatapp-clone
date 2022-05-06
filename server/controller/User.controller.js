@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const { isBoolean, isTrue } = require("../utils/generics");
+const { createRoom } = require("../utils/socket");
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -86,6 +87,28 @@ exports.getFriendsInfo = async (req, res) => {
 
     res.status(200).json(friendsInfo);
   } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+exports.deleteAllChats = async (req, res) => {
+  try {
+    const { to } = req.body;
+
+    const roomKey = createRoom(req.user._id, to);
+    console.log(roomKey);
+    const chatUpdateOptions = {
+      $pull: { chatHistory: { room: { $in: [roomKey] } } },
+    };
+    const chatHistoryCurrentUser = await User.findByIdAndUpdate(
+      req.user._id,
+      chatUpdateOptions,
+      { new: true }
+    ).select("chatHistory");
+    await User.findByIdAndUpdate(to, chatUpdateOptions);
+    res.status(200).json(chatHistoryCurrentUser);
+  } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Something went wrong" });
   }
 };

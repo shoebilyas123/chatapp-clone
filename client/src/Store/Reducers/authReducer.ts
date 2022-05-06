@@ -1,12 +1,12 @@
-import { INITIAL_USER_LOGIN } from "../../DefaultValues/auth";
+import { INITIAL_USER_LOGIN } from '../../DefaultValues';
 import {
   IAuthData,
   IAuthState,
   IFRRequests,
   IGlobalState,
   IReduxAction,
-} from "../../Interface/redux";
-import { ILoginResponse } from "../../Interface/responses";
+} from '../../Interface/redux';
+import { ILoginResponse } from '../../Interface/responses';
 import {
   LOGIN_FAIL,
   LOGIN_REQUEST,
@@ -15,17 +15,19 @@ import {
   USER_INFO_FAIL,
   USER_INFO_REQUEST,
   USER_INFO_SUCCESS,
-} from "../Constants/auth";
+} from '../Constants/auth';
 import {
   SEND_FR_REQUEST,
   SEND_FR_SUCCESS,
   ACCEPT_FR_REQUEST,
   ACCEPT_FR_SUCCESS,
   ACCEPT_FR_FAIL,
-} from "../Constants/friends";
+  UPDATE_CHAT_HISTORY,
+  CLEAR_CHAT_SUCCESS,
+} from '../Constants/friends';
 
 export default (
-  state: IGlobalState["userLogin"] = INITIAL_USER_LOGIN,
+  state: IGlobalState['userLogin'] = INITIAL_USER_LOGIN,
   action: IReduxAction<
     ILoginResponse & {
       newSent?: IFRRequests;
@@ -73,6 +75,25 @@ export default (
           ...state.userInfo,
           pendingRequests: action.payload?.pendingRequests,
           friends: action.payload?.friends,
+        },
+      };
+    case UPDATE_CHAT_HISTORY:
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          chatHistory: [
+            ...state.userInfo?.chatHistory,
+            (action.payload as any).message,
+          ],
+        },
+      };
+    case CLEAR_CHAT_SUCCESS:
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          chatHistory: (action.payload as any).chatHistory,
         },
       };
     case LOGOUT:
