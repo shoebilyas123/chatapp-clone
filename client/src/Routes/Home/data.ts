@@ -1,12 +1,13 @@
-import axios from "axios";
-import React from "react";
-import { useSelector } from "react-redux";
-import { IFRRequests, IGlobalState } from "../../Interface/redux";
-import { getAuthConfig } from "../../Utilities/api";
+import axios from 'axios';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { IFRRequests, IGlobalState } from '../../Interface/redux';
+import { getAuthConfig } from '../../Utilities/api';
 const useData = () => {
-  const { userAccessToken, userInfo } = useSelector(
-    (state: IGlobalState) => state.userLogin
-  );
+  const {
+    userLogin: { userAccessToken, userInfo, loading },
+    chatInfo,
+  } = useSelector((state: IGlobalState) => state);
   const [addUserModal, setAddUserModal] = React.useState(false);
 
   const toggleAddUser = () => {
@@ -20,6 +21,8 @@ const useData = () => {
   const reduxState = {
     userInfo,
     userAccessToken,
+    chatInfo,
+    loading,
   };
 
   return {

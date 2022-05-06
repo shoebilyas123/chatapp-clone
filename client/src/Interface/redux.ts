@@ -1,3 +1,5 @@
+import { IChatInfo } from './chats';
+
 export interface IFRRequests {
   name: string;
   profilePic: string;
@@ -11,6 +13,7 @@ export interface IAuthData {
   profilePic: string;
   sentRequests: IFRRequests[];
   pendingRequests: IFRRequests[];
+  chatHistory: any;
   friends: IFRRequests[];
   avatarColor: string;
   _id: string;
@@ -40,6 +43,10 @@ export interface IAcceptInvite extends IReduxStateCommon {
   pendingRequests: IFRRequests[];
 }
 
+export interface ISocket {
+  socket: any;
+}
+
 export interface IGlobalState {
   userLogin: {
     userInfo?: IAuthData;
@@ -47,4 +54,6 @@ export interface IGlobalState {
     sendingInvite: boolean;
     inviteSuccess: boolean;
   } & IReduxStateCommon;
+  chatInfo?: IChatInfo;
+  socketConnection?: ISocket;
 }

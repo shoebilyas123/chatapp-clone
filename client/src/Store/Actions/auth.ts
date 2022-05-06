@@ -1,9 +1,9 @@
-import axios from "axios";
-import { Dispatch } from "react";
-import { ILoginPayload } from "../../API/auth";
-import { IAuthState, IReduxAction } from "../../Interface/redux";
-import { ILoginResponse } from "../../Interface/responses";
-import { getAuthConfig } from "../../Utilities/api";
+import axios from 'axios';
+import { Dispatch } from 'react';
+import { ILoginPayload } from '../../API/auth';
+import { IAuthState, IReduxAction } from '../../Interface/redux';
+import { ILoginResponse } from '../../Interface/responses';
+import { getAuthConfig } from '../../Utilities/api';
 import {
   LOGIN_FAIL,
   LOGIN_REQUEST,
@@ -12,8 +12,8 @@ import {
   USER_INFO_FAIL,
   USER_INFO_REQUEST,
   USER_INFO_SUCCESS,
-} from "../Constants/auth";
-import { RootState } from "../store";
+} from '../Constants/auth';
+import { RootState } from '../store';
 
 export const login =
   (userPayload: ILoginPayload) =>
@@ -21,14 +21,14 @@ export const login =
     try {
       dispatch({ type: LOGIN_REQUEST });
       const { data } = await axios.post<ILoginResponse>(
-        "/api/v1/auth/login",
+        '/api/v1/auth/login',
         userPayload
       );
       dispatch({
         type: LOGIN_SUCCESS,
         payload: data,
       });
-      localStorage.setItem("userAccessToken", JSON.stringify(data.accessToken));
+      localStorage.setItem('userAccessToken', JSON.stringify(data.accessToken));
     } catch (error) {
       console.log(error);
       dispatch({ type: LOGIN_FAIL });
@@ -38,7 +38,7 @@ export const login =
 export const logout =
   () => async (dispatch: Dispatch<IReduxAction<IAuthState>>) => {
     dispatch({ type: LOGOUT });
-    localStorage.removeItem("userInfo");
+    localStorage.removeItem('userInfo');
   };
 
 export const getMyInfo =
@@ -52,9 +52,8 @@ export const getMyInfo =
       const {
         userLogin: { userAccessToken },
       } = getState();
-      const config = getAuthConfig({ token: userAccessToken || "" });
-      const { data } = await axios.get("/api/v1/auth/my-info", config);
-
+      const config = getAuthConfig({ token: userAccessToken || '' });
+      const { data } = await axios.get('/api/v1/auth/my-info', config);
       dispatch({ type: USER_INFO_SUCCESS, payload: { userInfo: data } });
     } catch (error) {
       console.log(error);

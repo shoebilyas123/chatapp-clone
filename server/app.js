@@ -13,8 +13,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "frontend_URL",
-    credentials: true,
+    origin: "*",
   })
 );
 app.use(express.json());
