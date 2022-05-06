@@ -1,10 +1,13 @@
-import React, { Ref } from "react";
-import { Dropdown } from "react-bootstrap";
-import DropdownMenu from "react-bootstrap/esm/DropdownMenu";
-import DropdownToggle from "react-bootstrap/esm/DropdownToggle";
-import { IFRRequests } from "../../Interface/redux";
-import DefaultAvatar from "../DefaultAvatar";
-import { FiMoreVertical } from "react-icons/fi";
+import React, { Ref } from 'react';
+import { Dropdown, ListGroup } from 'react-bootstrap';
+import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
+import DropdownToggle from 'react-bootstrap/esm/DropdownToggle';
+import { IFRRequests, IGlobalState } from '../../Interface/redux';
+import DefaultAvatar from '../DefaultAvatar';
+import { FiMoreVertical } from 'react-icons/fi';
+import { useDispatch, useSelector } from 'react-redux';
+import { setChatInfo } from '../../Store/Actions/friends';
+import { IChatInfo } from '../../Interface/chats';
 
 interface IProps {
   friend: IFRRequests;
@@ -31,13 +34,27 @@ const CustomToggle: any = React.forwardRef(
 );
 
 const ContactItem: React.FC<IProps> = ({ friend }) => {
+  const dispatch: any = useDispatch();
+
+  const selectFriendHandler = () => {
+    const chatInfo: IChatInfo = {
+      ...friend,
+      chatHistory: [],
+    };
+
+    dispatch(setChatInfo(chatInfo));
+  };
   return (
-    <>
+    <ListGroup.Item
+      className="d-flex align-items-center justify-content-between"
+      onClick={selectFriendHandler}
+      style={{ cursor: 'pointer' }}
+    >
       <div className="d-flex align-items-center">
         <DefaultAvatar
           text={friend.name.slice(0, 1).toUpperCase()}
-          color={friend.avatarColor || ""}
-          width={"3rem"}
+          color={friend.avatarColor || ''}
+          width={'3rem'}
           height="3rem"
         />
         <span className="ml-2">
@@ -56,7 +73,7 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
           <Dropdown.Item href="#">Remove Friend</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-    </>
+    </ListGroup.Item>
   );
 };
 

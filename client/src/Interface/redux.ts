@@ -1,4 +1,4 @@
-import { IChatInfo } from "./chats";
+import { IChatInfo } from './chats';
 
 export interface IFRRequests {
   name: string;
@@ -42,6 +42,10 @@ export interface IAcceptInvite extends IReduxStateCommon {
   pendingRequests: IFRRequests[];
 }
 
+export interface ISocket {
+  socket: any;
+}
+
 export interface IGlobalState {
   userLogin: {
     userInfo?: IAuthData;
@@ -50,4 +54,5 @@ export interface IGlobalState {
     inviteSuccess: boolean;
   } & IReduxStateCommon;
   chatInfo?: IChatInfo;
+  socketConnection?: ISocket;
 }

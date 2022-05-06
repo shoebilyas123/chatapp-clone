@@ -1,12 +1,12 @@
-import { createStore, applyMiddleware } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension";
-import thunk from "redux-thunk";
-import { INITIAL_USER_LOGIN } from "../DefaultValues";
-import { IGlobalState } from "../Interface/redux";
-import rootReducer from "./Reducers";
+import { createStore, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunk from 'redux-thunk';
+import { INITIAL_USER_LOGIN } from '../DefaultValues';
+import { IGlobalState } from '../Interface/redux';
+import rootReducer from './Reducers';
 
-const userAccessTokenFromLocalStorage = localStorage.getItem("userAccessToken")
-  ? JSON.parse(localStorage.getItem("userAccessToken") || "")
+const userAccessTokenFromLocalStorage = localStorage.getItem('userAccessToken')
+  ? JSON.parse(localStorage.getItem('userAccessToken') || '')
   : null;
 
 const initialState: IGlobalState = {
@@ -15,6 +15,8 @@ const initialState: IGlobalState = {
     sendingInvite: false,
     inviteSuccess: false,
   },
+  chatInfo: undefined,
+  socketConnection: undefined,
 };
 
 const store = createStore(
