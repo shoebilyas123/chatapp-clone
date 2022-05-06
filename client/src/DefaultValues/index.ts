@@ -10,6 +10,7 @@ export const INITIAL_USER_LOGIN: IGlobalState['userLogin'] = {
     pendingRequests: [],
     friends: [],
     avatarColor: '',
+    chatHistory: [],
   },
   userAccessToken: '',
   sendingInvite: false,

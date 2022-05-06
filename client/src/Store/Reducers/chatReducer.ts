@@ -11,6 +11,6 @@ export default (
     case SET_CHAT_INFO:
       return { ...state, ...action.payload };
     default:
-      return {};
+      return { ...state };
   }
 };

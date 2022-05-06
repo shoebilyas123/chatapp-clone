@@ -13,6 +13,7 @@ export interface IAuthData {
   profilePic: string;
   sentRequests: IFRRequests[];
   pendingRequests: IFRRequests[];
+  chatHistory: any;
   friends: IFRRequests[];
   avatarColor: string;
   _id: string;

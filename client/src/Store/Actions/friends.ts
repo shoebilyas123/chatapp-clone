@@ -14,10 +14,14 @@ import {
   ACCEPT_FR_FAIL,
   ACCEPT_FR_REQUEST,
   ACCEPT_FR_SUCCESS,
+  CLEAR_CHAT_FAIL,
+  CLEAR_CHAT_REQUEST,
+  CLEAR_CHAT_SUCCESS,
   SEND_FR_FAIL,
   SEND_FR_REQUEST,
   SEND_FR_SUCCESS,
   SET_CHAT_INFO,
+  UPDATE_CHAT_HISTORY,
 } from '../Constants/friends';
 import { RootState } from '../store';
 import { SOCKET_INIT } from '../Constants/socket';
@@ -96,11 +100,49 @@ export const setChatInfo =
   ) => {
     const {
       userLogin: { userAccessToken, userInfo },
+      chatInfo,
     } = getState();
+    if (chatInfo?.socket) {
+      chatInfo.socket.close();
+      chatInfo.socket = undefined;
+    }
+
     const socket = io(`http://localhost:8000`);
     socket.emit('joinRoom', {
       from: userInfo?._id,
       to: info._id,
     });
     dispatch({ type: SET_CHAT_INFO, payload: { ...info, socket } });
+  };
+
+export const updateChatHistory =
+  (newChat: any) => (dispatch: Dispatch<IReduxAction<any>>) => {
+    dispatch({ type: UPDATE_CHAT_HISTORY, payload: { message: newChat } });
+  };
+
+export const deleteAllChats =
+  (to: string) =>
+  async (
+    dispatch: Dispatch<IReduxAction<any>>,
+    getState: () => IGlobalState
+  ) => {
+    try {
+      const {
+        userLogin: { userAccessToken },
+      } = getState();
+      const config = getAuthConfig({ token: userAccessToken });
+      dispatch({ type: CLEAR_CHAT_REQUEST });
+      const { data } = await axios.post(
+        '/api/v1/users/chats/delete-all',
+        { to },
+        config
+      );
+      dispatch({
+        type: CLEAR_CHAT_SUCCESS,
+        payload: { chatHistory: data.chatHistory },
+      });
+    } catch (err) {
+      dispatch({ type: CLEAR_CHAT_FAIL });
+      console.log({ err });
+    }
   };

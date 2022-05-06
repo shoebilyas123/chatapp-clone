@@ -6,21 +6,22 @@ module.exports = (io) => {
     console.log(`Socket connected with SOCKETID:${socket.id}`);
 
     socket.on("joinRoom", (data) => {
-      socket.join("ROOM");
+      socket.leave(Array.from(socket.rooms)[1]);
+      socket.join(createRoom(data.from, data.to));
 
       socket.on("messageFromClient", async (data) => {
-        console.log({ data });
         const message = {
           message: data.message,
           sentAt: Date.now(),
+          room: createRoom(data.from, data.to),
         };
         await User.findByIdAndUpdate(data.from, {
           $push: { chatHistory: { ...message, from: "ME" } },
-        });
+        }).select("chatHistory");
         await User.findByIdAndUpdate(data.to, {
           $push: { chatHistory: { ...message, from: "FRIEND" } },
         });
-        io.to("ROOM").emit("messageFromServer", {
+        io.to(createRoom(data.from, data.to)).emit("messageFromServer", {
           ...message,
           socketId: socket.id,
         });

@@ -18,12 +18,14 @@ const userSchema = new mongoose.Schema({
   friends: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   pendingRequests: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   sentRequests: [{ type: mongoose.Types.ObjectId, ref: "User" }],
-  rooms: [{ type: String, unique: true }],
   chatHistory: [
     {
       from: { type: String, enum: ["ME", "FRIEND"] },
       sentAt: Date,
       message: String,
+      room: {
+        type: String,
+      },
     },
   ],
   avatarColor: String,

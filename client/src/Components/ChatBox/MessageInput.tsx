@@ -4,7 +4,7 @@ import { AiOutlineSend } from 'react-icons/ai';
 import { useSelector } from 'react-redux';
 import { IGlobalState } from '../../Interface/redux';
 
-const MessageInput = () => {
+const MessageInput = ({}) => {
   const [message, setMessage] = React.useState<string>('');
   const {
     userLogin: { userInfo },
@@ -22,6 +22,11 @@ const MessageInput = () => {
         to: chatInfo?._id,
         message,
       });
+      setMessage('');
+      const chats = document.getElementById(
+        'chat-message-container-chat-app-by-shoeb-ilyas'
+      );
+      chats?.scrollTo(0, chats.scrollHeight);
     }
   };
 

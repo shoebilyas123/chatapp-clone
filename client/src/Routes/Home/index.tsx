@@ -18,11 +18,12 @@ import Navbar from '../../Components/Navbar';
 import ScreenBox from '../../Components/ScreenBox';
 import { IGlobalState } from '../../Interface/redux';
 import { logout } from '../../Store/Actions/auth';
-import { sendInvite } from '../../Store/Actions/friends';
+import { sendInvite, updateChatHistory } from '../../Store/Actions/friends';
 import { getAuthConfig } from '../../Utilities/api';
 import Contacts from '../../Components/Contacts';
 import useData from './data';
 import ChatBox from '../../Components/ChatBox';
+import { DUMMY_DATA } from '../../data';
 
 const Home = () => {
   const { state, toggleAddUser, reduxState } = useData();
@@ -37,6 +38,18 @@ const Home = () => {
     }
   }, [userAccessToken]);
 
+  React.useEffect(() => {
+    if (chatInfo?.socket) {
+      chatInfo?.socket.on('messageFromServer', (data: any) => {
+        const transformedMsg = {
+          ...data,
+          from: data.socketId === chatInfo?.socket.id ? 'ME' : 'FRIEND',
+        };
+        dispatch(updateChatHistory(transformedMsg));
+      });
+    }
+  }, [chatInfo]);
+
   const logoutHandler = () => {
     dispatch(logout());
   };
@@ -50,7 +63,7 @@ const Home = () => {
             <Col md={4} style={{ height: '100vh', overflowY: 'auto' }}>
               <Contacts contacts={userInfo?.friends || []} />
             </Col>
-            {chatInfo && chatInfo._id && (
+            {chatInfo?._id && (
               <Col md={8}>
                 <ChatBox />
               </Col>

@@ -6,7 +6,7 @@ import { IFRRequests, IGlobalState } from '../../Interface/redux';
 import DefaultAvatar from '../DefaultAvatar';
 import { FiMoreVertical } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
-import { setChatInfo } from '../../Store/Actions/friends';
+import { deleteAllChats, setChatInfo } from '../../Store/Actions/friends';
 import { IChatInfo } from '../../Interface/chats';
 
 interface IProps {
@@ -44,12 +44,12 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
 
     dispatch(setChatInfo(chatInfo));
   };
+
+  const deleteChatsHandler = () => {
+    dispatch(deleteAllChats(friend._id));
+  };
   return (
-    <ListGroup.Item
-      className="d-flex align-items-center justify-content-between"
-      onClick={selectFriendHandler}
-      style={{ cursor: 'pointer' }}
-    >
+    <ListGroup.Item className="d-flex align-items-center justify-content-between">
       <div className="d-flex align-items-center">
         <DefaultAvatar
           text={friend.name.slice(0, 1).toUpperCase()}
@@ -57,7 +57,11 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
           width={'3rem'}
           height="3rem"
         />
-        <span className="ml-2">
+        <span
+          className="ml-2"
+          onClick={selectFriendHandler}
+          style={{ cursor: 'pointer' }}
+        >
           {friend.name.slice(0, 1).toUpperCase() + friend.name.slice(1)}
         </span>
       </div>
@@ -68,7 +72,9 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
 
         <Dropdown.Menu>
           <Dropdown.Item href="#">Archive</Dropdown.Item>
-          <Dropdown.Item href="#">Delete Chats</Dropdown.Item>
+          <Dropdown.Item onClick={deleteChatsHandler}>
+            Delete Chats
+          </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item href="#">Remove Friend</Dropdown.Item>
         </Dropdown.Menu>

@@ -22,6 +22,8 @@ import {
   ACCEPT_FR_REQUEST,
   ACCEPT_FR_SUCCESS,
   ACCEPT_FR_FAIL,
+  UPDATE_CHAT_HISTORY,
+  CLEAR_CHAT_SUCCESS,
 } from '../Constants/friends';
 
 export default (
@@ -73,6 +75,25 @@ export default (
           ...state.userInfo,
           pendingRequests: action.payload?.pendingRequests,
           friends: action.payload?.friends,
+        },
+      };
+    case UPDATE_CHAT_HISTORY:
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          chatHistory: [
+            ...state.userInfo?.chatHistory,
+            (action.payload as any).message,
+          ],
+        },
+      };
+    case CLEAR_CHAT_SUCCESS:
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          chatHistory: (action.payload as any).chatHistory,
         },
       };
     case LOGOUT:
