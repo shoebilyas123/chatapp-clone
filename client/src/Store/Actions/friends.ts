@@ -107,7 +107,7 @@ export const setChatInfo =
       chatInfo.socket = undefined;
     }
 
-    const socket = io(`http://localhost:8000`);
+    const socket = io(process.env.REACT_SOCKET_URL || `http://localhost:8000`);
     socket.emit('joinRoom', {
       from: userInfo?._id,
       to: info._id,
