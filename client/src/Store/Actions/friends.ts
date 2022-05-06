@@ -95,10 +95,12 @@ export const setChatInfo =
     getState: () => IGlobalState
   ) => {
     const {
-      userLogin: { userAccessToken },
+      userLogin: { userAccessToken, userInfo },
     } = getState();
-    const socket = io(`http://localhost:8000`, {
-      query: { token: userAccessToken },
+    const socket = io(`http://localhost:8000`);
+    socket.emit('joinRoom', {
+      from: userInfo?._id,
+      to: info._id,
     });
     dispatch({ type: SET_CHAT_INFO, payload: { ...info, socket } });
   };

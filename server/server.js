@@ -5,6 +5,7 @@ const path = require("path");
 const socketio = require("socket.io");
 
 const app = require("./app");
+const ioConnection = require("./utils/ioConnection");
 dotenv.config({ path: path.join(__dirname, "config.env") });
 
 if (process.env.NODE_ENV === "production") {
@@ -32,8 +33,5 @@ mongoose.connect(MONGOURI).then((con) => {
     console.log(`Server running at PORT:${PORT}`);
   });
   const io = socketio(server, { cors: { origin: "*" } });
-
-  io.on("connection", (socket) => {
-    console.log(`Socket connected: ${socket?.id}`);
-  });
+  ioConnection(io);
 });

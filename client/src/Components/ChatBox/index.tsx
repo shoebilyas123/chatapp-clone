@@ -30,7 +30,14 @@ const DUMMY_DATA = [
 ];
 
 const ChatBox: React.FC<IProps> = () => {
-  const chatInfo = useSelector((state: IGlobalState) => state.chatInfo);
+  const { chatInfo } = useSelector((state: IGlobalState) => state);
+
+  if (chatInfo?.socket) {
+    chatInfo.socket.on('messageFromServer', (message: any) => {
+      console.log(message);
+    });
+  }
+
   return (
     <Card className="m-2 ml-0" style={{ height: '90%' }}>
       <Card.Header>{chatInfo?.name || ''}</Card.Header>
