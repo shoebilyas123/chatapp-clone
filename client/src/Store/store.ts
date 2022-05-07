@@ -14,6 +14,8 @@ const initialState: IGlobalState = {
     userAccessToken: userAccessTokenFromLocalStorage,
     sendingInvite: false,
     inviteSuccess: false,
+    chatsLoading: false,
+    loading: true,
   },
   chatInfo: undefined,
   socketConnection: undefined,

@@ -24,6 +24,7 @@ import {
   ACCEPT_FR_FAIL,
   UPDATE_CHAT_HISTORY,
   CLEAR_CHAT_SUCCESS,
+  CLEAR_CHAT_REQUEST,
 } from '../Constants/friends';
 
 export default (
@@ -50,7 +51,7 @@ export default (
     case LOGIN_FAIL || USER_INFO_FAIL:
       return { ...state, success: false, loading: false, fail: true };
     case USER_INFO_SUCCESS:
-      return { ...state, userInfo: action.payload?.userInfo };
+      return { ...state, userInfo: action.payload?.userInfo, loading: false };
     case SEND_FR_REQUEST:
       return { ...state, sendingInvite: true };
     case SEND_FR_SUCCESS:
@@ -88,6 +89,8 @@ export default (
           ],
         },
       };
+    case CLEAR_CHAT_REQUEST:
+      return { ...state, chatsLoading: true };
     case CLEAR_CHAT_SUCCESS:
       return {
         ...state,
@@ -95,6 +98,7 @@ export default (
           ...state.userInfo,
           chatHistory: (action.payload as any).chatHistory,
         },
+        chatsLoading: false,
       };
     case LOGOUT:
       return {};

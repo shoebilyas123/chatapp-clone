@@ -1,4 +1,4 @@
-import React, { Dispatch } from "react";
+import React, { Dispatch } from 'react';
 import {
   Button,
   Card,
@@ -9,12 +9,12 @@ import {
   Navbar,
   Row,
   Spinner,
-} from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import ScreenBox from "../../Components/ScreenBox";
-import { IGlobalState } from "../../Interface/redux";
-import { login } from "../../Store/Actions/auth";
+} from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import ScreenBox from '../../Components/ScreenBox';
+import { IGlobalState } from '../../Interface/redux';
+import { login } from '../../Store/Actions/auth';
 
 interface IState {
   email: string;
@@ -23,8 +23,8 @@ interface IState {
 }
 
 const Login = () => {
-  const [email, setEmail] = React.useState<IState["email"]>("");
-  const [password, setPassword] = React.useState<IState["password"]>("");
+  const [email, setEmail] = React.useState<IState['email']>('');
+  const [password, setPassword] = React.useState<IState['password']>('');
   const { userAccessToken, loading } = useSelector(
     (state: IGlobalState) => state.userLogin
   );
@@ -33,7 +33,7 @@ const Login = () => {
 
   React.useEffect(() => {
     if (userAccessToken) {
-      navigate("/");
+      navigate('/');
     }
   }, [userAccessToken]);
 
@@ -55,7 +55,7 @@ const Login = () => {
         </Container>
       </Navbar>
       <Container
-        style={{ height: "90vh" }}
+        style={{ height: '90vh' }}
         className="d-flex flex-row align-items-center justify-content-center"
       >
         <Row md={12}>

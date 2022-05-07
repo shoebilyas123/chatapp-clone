@@ -71,7 +71,6 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          <Dropdown.Item href="#">Archive</Dropdown.Item>
           <Dropdown.Item onClick={deleteChatsHandler}>
             Delete Chats
           </Dropdown.Item>

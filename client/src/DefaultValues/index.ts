@@ -15,6 +15,7 @@ export const INITIAL_USER_LOGIN: IGlobalState['userLogin'] = {
   userAccessToken: '',
   sendingInvite: false,
   inviteSuccess: false,
+  chatsLoading: false,
 };
 
 export const INITIAL_CHAT_INFO: IGlobalState['chatInfo'] = {

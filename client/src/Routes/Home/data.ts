@@ -5,7 +5,7 @@ import { IFRRequests, IGlobalState } from '../../Interface/redux';
 import { getAuthConfig } from '../../Utilities/api';
 const useData = () => {
   const {
-    userLogin: { userAccessToken, userInfo, loading },
+    userLogin: { userAccessToken, userInfo, loading, chatsLoading },
     chatInfo,
   } = useSelector((state: IGlobalState) => state);
   const [addUserModal, setAddUserModal] = React.useState(false);
@@ -23,6 +23,7 @@ const useData = () => {
     userAccessToken,
     chatInfo,
     loading,
+    chatsLoading,
   };
 
   return {

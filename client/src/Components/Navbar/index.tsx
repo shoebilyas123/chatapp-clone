@@ -1,25 +1,46 @@
-import React, { Dispatch, useEffect } from "react";
+import React, { Dispatch, Ref } from 'react';
 import {
   Navbar as BootstrapNavbar,
   Container,
   Button,
   Nav,
-  Row,
   ListGroup,
   Spinner,
-  Card,
-} from "react-bootstrap";
-import { FiRefreshCcw, FiSend } from "react-icons/fi";
-import { BsPeopleFill, BsPlusCircle } from "react-icons/bs";
-import { useDispatch, useSelector } from "react-redux";
+  Dropdown,
+} from 'react-bootstrap';
+import { FiRefreshCcw, FiSend } from 'react-icons/fi';
+import { BsPeopleFill, BsPlusCircle } from 'react-icons/bs';
+import { CgProfile } from 'react-icons/cg';
+import { useDispatch, useSelector } from 'react-redux';
 
-import Popover from "../Popover";
-import Logo from "../Logo";
-import { IAuthData, IGlobalState, IFRRequests } from "../../Interface/redux";
-import DefaultAvatar from "../DefaultAvatar";
-import SearchUsers from "../SearchUsers";
-import { acceptInvite } from "../../Store/Actions/friends";
-import { getMyInfo } from "../../Store/Actions/auth";
+import Popover from '../Popover';
+import Logo from '../Logo';
+import { IGlobalState, IFRRequests } from '../../Interface/redux';
+import DefaultAvatar from '../DefaultAvatar';
+import SearchUsers from '../SearchUsers';
+import { acceptInvite } from '../../Store/Actions/friends';
+import { getMyInfo, logout } from '../../Store/Actions/auth';
+
+const CustomToggle: any = React.forwardRef(
+  (
+    {
+      children,
+      onClick,
+    }: { children: React.ReactNode; onClick: (e: any) => void },
+    ref: Ref<any>
+  ) => (
+    <a
+      href=""
+      ref={ref}
+      onClick={(e: any) => {
+        e.preventDefault();
+        onClick(e);
+      }}
+    >
+      {children}
+    </a>
+  )
+);
 
 const Navbar = () => {
   const { userAccessToken, userInfo, loading } = useSelector(
@@ -35,6 +56,10 @@ const Navbar = () => {
     dispatch(acceptInvite(id));
   };
 
+  const logoutHandler = () => {
+    dispatch(logout());
+  };
+
   return (
     <BootstrapNavbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
@@ -48,7 +73,7 @@ const Navbar = () => {
                 <div className="d-flex flex-column">
                   <div
                     onClick={toggleAddUserModal}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: 'pointer' }}
                     className="mb-0 ml-2"
                   >
                     <BsPlusCircle color="white" />
@@ -59,7 +84,7 @@ const Navbar = () => {
             <Nav.Item>
               <Popover
                 title="Requests"
-                width={"240px"}
+                width={'240px'}
                 className="p-0"
                 placement="bottom"
                 content={
@@ -86,10 +111,10 @@ const Navbar = () => {
                         )}
                       </ListGroup>
                     ) : (
-                      <Container style={{ width: "100%", height: "150px" }}>
+                      <Container style={{ width: '100%', height: '150px' }}>
                         <div
                           className="d-flex align-items-center justify-content-center"
-                          style={{ height: "100%" }}
+                          style={{ height: '100%' }}
                         >
                           <p>No Pending Requests</p>
                         </div>
@@ -107,7 +132,7 @@ const Navbar = () => {
                     Sent
                   </div>
                 }
-                width={"240px"}
+                width={'240px'}
                 className="p-0"
                 content={
                   <div>
@@ -117,7 +142,7 @@ const Navbar = () => {
                           <ListGroup.Item>
                             <div className="d-flex align-items-center justify-content-between">
                               <DefaultAvatar
-                                color={request?.avatarColor || ""}
+                                color={request?.avatarColor || ''}
                                 text={request?.name?.slice(0, 1).toUpperCase()}
                               />
                               <p className="mb-0">{request.name}</p>
@@ -127,10 +152,10 @@ const Navbar = () => {
                         ))}
                       </ListGroup>
                     ) : (
-                      <Container style={{ width: "100%", height: "150px" }}>
+                      <Container style={{ width: '100%', height: '150px' }}>
                         <div
                           className="d-flex align-items-center justify-content-center"
-                          style={{ height: "100%" }}
+                          style={{ height: '100%' }}
                         >
                           <p>No Pending Requests</p>
                         </div>
@@ -149,6 +174,21 @@ const Navbar = () => {
                 <FiRefreshCcw onClick={() => dispatch(getMyInfo())} />
               </Button>
             </Nav.Item>
+            <Dropdown className="d-inline mx-2">
+              <Dropdown.Toggle
+                as={CustomToggle}
+                id="dropdown-autoclose-true"
+                className="pt-2"
+              >
+                <CgProfile color="white" />
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item>Delete Chats</Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={logoutHandler}>Logout</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </Nav>
         </div>
         <SearchUsers isOpen={isSearchModal} toggle={toggleAddUserModal} />

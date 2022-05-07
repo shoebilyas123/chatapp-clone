@@ -1,34 +1,20 @@
-import axios from 'axios';
 import React, { Dispatch } from 'react';
-import {
-  Button,
-  Col,
-  Container,
-  FormControl,
-  InputGroup,
-  ListGroup,
-  Modal,
-  Row,
-  Spinner,
-} from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { Col, Container, Row } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import DefaultAvatar from '../../Components/DefaultAvatar';
 import Navbar from '../../Components/Navbar';
 import ScreenBox from '../../Components/ScreenBox';
-import { IGlobalState } from '../../Interface/redux';
 import { logout } from '../../Store/Actions/auth';
-import { sendInvite, updateChatHistory } from '../../Store/Actions/friends';
-import { getAuthConfig } from '../../Utilities/api';
+import { updateChatHistory } from '../../Store/Actions/friends';
 import Contacts from '../../Components/Contacts';
 import useData from './data';
 import ChatBox from '../../Components/ChatBox';
-import { DUMMY_DATA } from '../../data';
+import ScreenLoader from '../../Components/ScreenLoader';
 
 const Home = () => {
   const { state, toggleAddUser, reduxState } = useData();
-  const { addUserModal } = state;
-  const { userInfo, userAccessToken, chatInfo, loading } = reduxState;
+  const { userInfo, userAccessToken, chatsLoading, chatInfo, loading } =
+    reduxState;
   const dispatch: Dispatch<any> = useDispatch();
   const navigate = useNavigate();
 
@@ -46,19 +32,25 @@ const Home = () => {
           from: data.socketId === chatInfo?.socket.id ? 'ME' : 'FRIEND',
         };
         dispatch(updateChatHistory(transformedMsg));
+        chatInfo.socket.off('messageFromServer');
       });
     }
   }, [chatInfo]);
+
+  React.useEffect(() => {
+    console.log({ chatsLoading, loading });
+  }, [chatsLoading, loading]);
 
   const logoutHandler = () => {
     dispatch(logout());
   };
 
   return (
-    <div>
+    <div style={{ width: '100vw !important' }}>
       <Navbar />
+      {(chatsLoading || loading) && <ScreenLoader />}
       <ScreenBox>
-        <Container style={{ backgroundColor: '#EBEBEB' }}>
+        <Container>
           <Row md={12}>
             <Col md={4} style={{ height: '100vh', overflowY: 'auto' }}>
               <Contacts contacts={userInfo?.friends || []} />

@@ -108,7 +108,7 @@ export const setChatInfo =
     }
 
     const socket = io(
-      process.env.REACT_SOCKET_URL ||
+      'http://localhost:8000' ||
         `https://chatapp-clone-shoebilyas.herokuapp.com/`
     );
     socket.emit('joinRoom', {
@@ -129,6 +129,7 @@ export const deleteAllChats =
     dispatch: Dispatch<IReduxAction<any>>,
     getState: () => IGlobalState
   ) => {
+    dispatch({ type: CLEAR_CHAT_REQUEST });
     try {
       const {
         userLogin: { userAccessToken },

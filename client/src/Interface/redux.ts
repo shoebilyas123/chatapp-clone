@@ -53,6 +53,7 @@ export interface IGlobalState {
     userAccessToken: string;
     sendingInvite: boolean;
     inviteSuccess: boolean;
+    chatsLoading: boolean;
   } & IReduxStateCommon;
   chatInfo?: IChatInfo;
   socketConnection?: ISocket;

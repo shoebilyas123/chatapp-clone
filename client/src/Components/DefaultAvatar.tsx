@@ -1,4 +1,6 @@
-import React from "react";
+import React from 'react';
+
+import { CgProfile } from 'react-icons/cg';
 
 interface IProps {
   text: string;
@@ -12,9 +14,9 @@ const DefaultAvatar: React.FC<IProps> = ({ text, color, width, height }) => {
     <div
       className="d-flex align-items-center justify-content-center text-white rounded-circle"
       style={{
-        width: width || "1.5rem",
-        height: height || "1.5rem",
-        backgroundColor: color || "rgba(125, 125, 125, .4)",
+        width: width || '1.5rem',
+        height: height || '1.5rem',
+        backgroundColor: color || 'rgba(125, 125, 125, .4)',
       }}
     >
       {text}
