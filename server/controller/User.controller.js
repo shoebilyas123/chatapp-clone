@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const { isBoolean, isTrue } = require("../utils/generics");
+const { getS3SignedURL } = require("../utils/s3");
 const { createRoom } = require("../utils/socket");
 
 exports.getAllUsers = async (req, res) => {
@@ -110,5 +111,17 @@ exports.deleteAllChats = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+exports.uploadProfilePic = async (req, res) => {
+  const fileName = req.query.fileName;
+  const fileType = req.query.fileType;
+  try {
+    const url = await getS3SignedURL(fileName, fileType, req.user._id);
+    res.status(200).json({ url });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
   }
 };

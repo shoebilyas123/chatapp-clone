@@ -1,3 +1,4 @@
+import { userInfo } from 'os';
 import React, { Dispatch } from 'react';
 import {
   Button,
@@ -25,17 +26,17 @@ interface IState {
 const Login = () => {
   const [email, setEmail] = React.useState<IState['email']>('');
   const [password, setPassword] = React.useState<IState['password']>('');
-  const { userAccessToken, loading } = useSelector(
+  const { userAccessToken, userInfo, loading } = useSelector(
     (state: IGlobalState) => state.userLogin
   );
   const dispatch: Dispatch<any> = useDispatch();
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (userAccessToken) {
+    if (userAccessToken || userInfo) {
       navigate('/');
     }
-  }, [userAccessToken]);
+  }, [userAccessToken, userInfo]);
 
   const loginHandler = () => {
     dispatch(login({ email, password }));

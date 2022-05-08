@@ -37,10 +37,6 @@ const Home = () => {
     }
   }, [chatInfo]);
 
-  React.useEffect(() => {
-    console.log({ chatsLoading, loading });
-  }, [chatsLoading, loading]);
-
   const logoutHandler = () => {
     dispatch(logout());
   };
@@ -53,7 +49,9 @@ const Home = () => {
         <Container>
           <Row md={12}>
             <Col md={4} style={{ height: '100vh', overflowY: 'auto' }}>
-              <Contacts contacts={userInfo?.friends || []} />
+              {userInfo?.friends && (
+                <Contacts contacts={userInfo?.friends || []} />
+              )}
             </Col>
             {chatInfo?._id && (
               <Col md={8}>
