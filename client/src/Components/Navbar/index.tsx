@@ -20,6 +20,7 @@ import DefaultAvatar from '../DefaultAvatar';
 import SearchUsers from '../SearchUsers';
 import { acceptInvite } from '../../Store/Actions/friends';
 import { getMyInfo, logout } from '../../Store/Actions/auth';
+import Settings from '../Settings';
 
 const CustomToggle: any = React.forwardRef(
   (
@@ -48,6 +49,7 @@ const Navbar = () => {
   );
   const dispatch: Dispatch<any> = useDispatch();
   const [isSearchModal, setIsSearchModal] = React.useState<boolean>(false);
+  const [settingsModal, setSettingsModal] = React.useState<boolean>(false);
   const toggleAddUserModal = () => {
     setIsSearchModal((prev) => !prev);
   };
@@ -58,6 +60,10 @@ const Navbar = () => {
 
   const logoutHandler = () => {
     dispatch(logout());
+  };
+
+  const toggleSettingsModal = () => {
+    setSettingsModal((prev) => !prev);
   };
 
   return (
@@ -180,19 +186,23 @@ const Navbar = () => {
                 id="dropdown-autoclose-true"
                 className="pt-2"
               >
-                <CgProfile color="white" />
+                <CgProfile color="white"  />
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
                 <Dropdown.Item>Delete Chats</Dropdown.Item>
-                <Dropdown.Divider />
                 <Dropdown.Item onClick={logoutHandler}>Logout</Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={toggleSettingsModal}>
+                  Settings
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Nav>
         </div>
         <SearchUsers isOpen={isSearchModal} toggle={toggleAddUserModal} />
       </Container>
+      <Settings isOpen={settingsModal} toggle={toggleSettingsModal} />
     </BootstrapNavbar>
   );
 };
