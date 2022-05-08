@@ -111,3 +111,34 @@ exports.changePassword = async (req, res) => {
     res.send("error");
   }
 };
+
+exports.updateProfilePic = async (req, res) => {
+  try {
+    const profile = req.body.profilePic;
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        profilePic: profile,
+      },
+      { new: true }
+    ).select("profilePic");
+
+    res.status(200).json(user.profilePic);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
+exports.removeProfilePic = async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.user._id, {
+      $set: { profile: "" },
+    });
+
+    res.status(200).json({});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};

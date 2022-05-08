@@ -12,6 +12,8 @@ import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGOUT,
+  REMOVE_PROFILE_PIC,
+  SET_PROFILE_PIC,
   USER_INFO_FAIL,
   USER_INFO_REQUEST,
   USER_INFO_SUCCESS,
@@ -102,6 +104,22 @@ export default (
       };
     case LOGOUT:
       return {};
+    case SET_PROFILE_PIC:
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          profilePic: (action.payload as any).profilePic,
+        },
+      };
+    case REMOVE_PROFILE_PIC:
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          profilePic: '',
+        },
+      };
     default:
       return { ...state };
   }
