@@ -108,8 +108,7 @@ export const setChatInfo =
     }
 
     const socket = io(
-      // 'http://localhost:8000' ||
-      `https://chatapp-clone-shoebilyas.herokuapp.com/`
+      process.env.SOCKETURL || `https://chatapp-clone-shoebilyas.herokuapp.com/`
     );
     socket.emit('joinRoom', {
       from: userInfo?._id,

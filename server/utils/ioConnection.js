@@ -21,7 +21,7 @@ module.exports = (io) => {
         await User.findByIdAndUpdate(data.to, {
           $push: { chatHistory: { ...message, from: "FRIEND" } },
         });
-        console.log({ FROMCLIENTPOST: data });
+
         io.to(createRoom(data.from, data.to)).emit("messageFromServer", {
           ...message,
           socketId: socket.id,

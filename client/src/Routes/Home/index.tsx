@@ -1,19 +1,35 @@
+import axios from 'axios';
 import React, { Dispatch } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
+import {
+  Button,
+  Col,
+  Container,
+  FormControl,
+  InputGroup,
+  ListGroup,
+  Modal,
+  Row,
+  Spinner,
+} from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import DefaultAvatar from '../../Components/DefaultAvatar';
 import Navbar from '../../Components/Navbar';
 import ScreenBox from '../../Components/ScreenBox';
+import { IGlobalState } from '../../Interface/redux';
 import { logout } from '../../Store/Actions/auth';
-import { updateChatHistory } from '../../Store/Actions/friends';
+import { sendInvite, updateChatHistory } from '../../Store/Actions/friends';
+import { getAuthConfig } from '../../Utilities/api';
 import Contacts from '../../Components/Contacts';
 import useData from './data';
 import ChatBox from '../../Components/ChatBox';
+import { DUMMY_DATA } from '../../data';
 import ScreenLoader from '../../Components/ScreenLoader';
 
 const Home = () => {
   const { state, toggleAddUser, reduxState } = useData();
-  const { userInfo, userAccessToken, chatsLoading, chatInfo, loading } =
+  const { addUserModal } = state;
+  const { userInfo, userAccessToken, chatInfo, loading, chatsLoading } =
     reduxState;
   const dispatch: Dispatch<any> = useDispatch();
   const navigate = useNavigate();
