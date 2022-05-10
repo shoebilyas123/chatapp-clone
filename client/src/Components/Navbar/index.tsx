@@ -21,6 +21,7 @@ import SearchUsers from '../SearchUsers';
 import { acceptInvite } from '../../Store/Actions/friends';
 import { getMyInfo, logout } from '../../Store/Actions/auth';
 import Settings from '../Settings';
+import ProfilePic from '../Settings/ProfilePic';
 
 const CustomToggle: any = React.forwardRef(
   (
@@ -142,15 +143,23 @@ const Navbar = () => {
                 className="p-0"
                 content={
                   <div>
-                    {(userInfo?.sentRequests || []).length > 0 ? (
+                    {loading ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : userInfo?.sentRequests ? (
                       <ListGroup>
                         {userInfo?.sentRequests.map((request: IFRRequests) => (
                           <ListGroup.Item>
                             <div className="d-flex align-items-center justify-content-between">
-                              <DefaultAvatar
-                                color={request?.avatarColor || ''}
-                                text={request?.name?.slice(0, 1).toUpperCase()}
-                              />
+                              {request?.profilePic ? (
+                                <ProfilePic content={request.profilePic} />
+                              ) : (
+                                <DefaultAvatar
+                                  text={request.name.slice(0, 1).toUpperCase()}
+                                  color={request.avatarColor || ''}
+                                  width={'3rem'}
+                                  height="3rem"
+                                />
+                              )}
                               <p className="mb-0">{request.name}</p>
                               <Button size="sm">Unsend</Button>
                             </div>
@@ -166,9 +175,6 @@ const Navbar = () => {
                           <p>No Pending Requests</p>
                         </div>
                       </Container>
-                    )}
-                    {!userInfo?.sentRequests && loading && (
-                      <Spinner animation="border" size="sm" />
                     )}
                   </div>
                 }
@@ -186,7 +192,7 @@ const Navbar = () => {
                 id="dropdown-autoclose-true"
                 className="pt-2"
               >
-                <CgProfile color="white"  />
+                <CgProfile color="white" />
               </Dropdown.Toggle>
 
               <Dropdown.Menu>

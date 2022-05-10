@@ -25,6 +25,7 @@ const DefaultAvatar: React.FC<IProps> = ({
         height: height || '1.5rem',
         fontSize: fontSize || '1rem',
         backgroundColor: color || 'rgba(125, 125, 125, .4)',
+        overflow: 'hidden',
       }}
     >
       {text}

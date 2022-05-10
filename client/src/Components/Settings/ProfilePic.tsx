@@ -14,9 +14,10 @@ const ProfilePic: React.FC<IProps> = ({ content, color, width, height }) => {
     <div
       className="d-flex align-items-center justify-content-center text-white rounded-circle"
       style={{
-        width: width || '1.5rem',
-        height: height || '1.5rem',
+        width: width || '3rem',
+        height: height || '3rem',
         backgroundColor: color || 'rgba(125, 125, 125, .4)',
+        overflow: 'hidden',
       }}
     >
       <img src={content} style={{ width: '100%', height: '100%' }} />

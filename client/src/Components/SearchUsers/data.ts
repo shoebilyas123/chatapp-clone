@@ -1,8 +1,8 @@
-import axios from "axios";
-import React from "react";
-import { useSelector } from "react-redux";
-import { IFRRequests, IGlobalState } from "../../Interface/redux";
-import { getAuthConfig } from "../../Utilities/api";
+import axios from 'axios';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { IFRRequests, IGlobalState } from '../../Interface/redux';
+import { getAuthConfig } from '../../Utilities/api';
 
 export default () => {
   const { userAccessToken, userInfo } = useSelector(
@@ -33,6 +33,7 @@ export default () => {
           email: user.email,
           _id: user._id,
           avatarColor: user.avatarColor,
+          profilePic: user.profilePic,
         }))
       );
       setIsSearching(false);

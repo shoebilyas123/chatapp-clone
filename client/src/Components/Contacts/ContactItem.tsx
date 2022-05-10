@@ -8,6 +8,7 @@ import { FiMoreVertical } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteAllChats, setChatInfo } from '../../Store/Actions/friends';
 import { IChatInfo } from '../../Interface/chats';
+import ProfilePic from '../Settings/ProfilePic';
 
 interface IProps {
   friend: IFRRequests;
@@ -51,12 +52,16 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
   return (
     <ListGroup.Item className="d-flex align-items-center justify-content-between">
       <div className="d-flex align-items-center">
-        <DefaultAvatar
-          text={friend.name.slice(0, 1).toUpperCase()}
-          color={friend.avatarColor || ''}
-          width={'3rem'}
-          height="3rem"
-        />
+        {friend?.profilePic ? (
+          <ProfilePic content={friend.profilePic} />
+        ) : (
+          <DefaultAvatar
+            text={friend.name.slice(0, 1).toUpperCase()}
+            color={friend.avatarColor || ''}
+            width={'3rem'}
+            height="3rem"
+          />
+        )}
         <span
           className="ml-2"
           onClick={selectFriendHandler}
