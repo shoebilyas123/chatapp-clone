@@ -12,12 +12,11 @@ const userAccessTokenFromLocalStorage = localStorage.getItem('userAccessToken')
 const initialState: IGlobalState = {
   userLogin: {
     userAccessToken: userAccessTokenFromLocalStorage,
-    sendingInvite: false,
-    inviteSuccess: false,
-    chatsLoading: false,
+    inviteLoading: false,
+    inviteSent: false,
     loading: true,
   },
-  chatInfo: undefined,
+  chats: undefined,
   socketConnection: undefined,
 };
 

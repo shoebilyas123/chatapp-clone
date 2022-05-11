@@ -8,7 +8,7 @@ const MessageInput = ({}) => {
   const [message, setMessage] = React.useState<string>('');
   const {
     userLogin: { userInfo },
-    chatInfo,
+    chats,
   } = useSelector((state: IGlobalState) => state);
 
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,17 +16,17 @@ const MessageInput = ({}) => {
     setMessage(e.target.value);
   };
   const onMessageSendHandler = () => {
-    if (chatInfo?.socket) {
-      chatInfo.socket.emit('messageFromClient', {
+    if (chats?.socket) {
+      chats.socket.emit('messageFromClient', {
         from: userInfo?._id,
-        to: chatInfo?._id,
+        to: chats?._id,
         message,
       });
       setMessage('');
-      const chats = document.getElementById(
+      const chatsElement = document.getElementById(
         'chat-message-container-chat-app-by-shoeb-ilyas'
       );
-      chats?.scrollTo(0, chats.scrollHeight);
+      chatsElement?.scrollTo(0, chatsElement.scrollHeight);
     }
   };
 

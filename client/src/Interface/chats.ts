@@ -4,5 +4,8 @@ export interface IChatInfo {
   avatarColor: string;
   profilePic?: string;
   chatHistory?: any;
+  chatsLoading: boolean;
+  chatsSuccess: boolean;
+  chatsError: string;
   socket?: any;
 }

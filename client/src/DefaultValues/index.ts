@@ -10,16 +10,17 @@ export const INITIAL_USER_LOGIN: IGlobalState['userLogin'] = {
     pendingRequests: [],
     friends: [],
     avatarColor: '',
-    chatHistory: [],
   },
   userAccessToken: '',
-  sendingInvite: false,
-  inviteSuccess: false,
-  chatsLoading: false,
+  inviteLoading: false,
+  inviteSent: false,
 };
 
-export const INITIAL_CHAT_INFO: IGlobalState['chatInfo'] = {
+export const INITIAL_CHAT_INFO: IGlobalState['chats'] = {
   chatHistory: [],
+  chatsError: '',
+  chatsLoading: false,
+  chatsSuccess: false,
   avatarColor: '',
   profilePic: '',
   name: '',

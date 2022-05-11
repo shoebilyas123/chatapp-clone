@@ -14,7 +14,7 @@ interface IProps {
 
 const ChatBox: React.FC<IProps> = () => {
   const {
-    chatInfo,
+    chats,
     userLogin: { userInfo },
   } = useSelector((state: IGlobalState) => state);
 
@@ -27,7 +27,7 @@ const ChatBox: React.FC<IProps> = () => {
 
   return (
     <Card className="m-2 ml-0" style={{ height: '90%', maxHeight: '90%' }}>
-      <Card.Header>{chatInfo?.name || ''}</Card.Header>
+      <Card.Header>{chats?.name || ''}</Card.Header>
       <Card.Body>
         <Container>
           <Row>

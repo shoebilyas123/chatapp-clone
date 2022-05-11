@@ -4,7 +4,7 @@ import { IGlobalState, IReduxAction } from '../../Interface/redux';
 import { SET_CHAT_INFO } from '../Constants/friends';
 
 export default (
-  state: IGlobalState['chatInfo'] = INITIAL_CHAT_INFO,
+  state: IGlobalState['chats'] = INITIAL_CHAT_INFO,
   action: IReduxAction<IChatInfo>
 ) => {
   switch (action.type) {

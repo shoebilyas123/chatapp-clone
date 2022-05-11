@@ -1,17 +1,15 @@
 import React, { Ref } from 'react';
 import { Dropdown, ListGroup } from 'react-bootstrap';
-import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
-import DropdownToggle from 'react-bootstrap/esm/DropdownToggle';
-import { IFRRequests, IGlobalState } from '../../Interface/redux';
+import { IFriends } from '../../Interface/redux';
 import DefaultAvatar from '../DefaultAvatar';
 import { FiMoreVertical } from 'react-icons/fi';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { deleteAllChats, setChatInfo } from '../../Store/Actions/friends';
 import { IChatInfo } from '../../Interface/chats';
 import ProfilePic from '../Settings/ProfilePic';
 
 interface IProps {
-  friend: IFRRequests;
+  friend: IFriends;
 }
 const CustomToggle: any = React.forwardRef(
   (
@@ -38,17 +36,18 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
   const dispatch: any = useDispatch();
 
   const selectFriendHandler = () => {
-    const chatInfo: IChatInfo = {
+    const chats: IChatInfo = {
       ...friend,
       chatHistory: [],
     };
 
-    dispatch(setChatInfo(chatInfo));
+    dispatch(setChatInfo(chats));
   };
 
   const deleteChatsHandler = () => {
     dispatch(deleteAllChats(friend._id));
   };
+
   return (
     <ListGroup.Item className="d-flex align-items-center justify-content-between">
       <div className="d-flex align-items-center">

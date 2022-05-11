@@ -1,6 +1,7 @@
 const { signToken } = require("../utils/auth");
 const { generateAvatarColor } = require("../utils/generics");
 const User = require("./../models/user.model");
+const { createRoom } = require("../utils/socket");
 
 exports.register = async (req, res) => {
   try {
@@ -94,7 +95,7 @@ exports.getCurrentUser = async (req, res) => {
     if (!user) {
       res
         .status(404)
-        .json({ messag: "User has either been deleted or does not exist." });
+        .json({ message: "User has either been deleted or does not exist." });
       return;
     }
 
@@ -140,5 +141,19 @@ exports.removeProfilePic = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
+  }
+};
+
+exports.getChatsFor = async (req, res) => {
+  try {
+    const connectTo = req.params.id;
+    const roomId = createRoom(req.user._id, connectTo);
+    const options = {
+      "chatHistory.room": { $eq: roomId },
+    };
+    const chatsHistory = await User.findById(req.user._id, options);
+    res.status(200).json(chatsHistory.chatsHistory);
+  } catch (error) {
+    req.json(error);
   }
 };

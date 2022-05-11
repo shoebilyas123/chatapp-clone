@@ -2,7 +2,7 @@ import { INITIAL_USER_LOGIN } from '../../DefaultValues';
 import {
   IAuthData,
   IAuthState,
-  IFRRequests,
+  IFriends,
   IGlobalState,
   IReduxAction,
 } from '../../Interface/redux';
@@ -33,9 +33,9 @@ export default (
   state: IGlobalState['userLogin'] = INITIAL_USER_LOGIN,
   action: IReduxAction<
     ILoginResponse & {
-      newSent?: IFRRequests;
-      friends?: IFRRequests[];
-      pendingRequests?: IFRRequests[];
+      newSent?: IFriends;
+      friends?: IFriends[];
+      pendingRequests?: IFriends[];
     }
   >
 ) => {
@@ -51,11 +51,22 @@ export default (
         accessToken: action.payload?.accessToken,
       };
     case LOGIN_FAIL || USER_INFO_FAIL:
-      return { ...state, success: false, loading: false, fail: true };
+      return {
+        ...state,
+        success: false,
+        loading: false,
+        error: 'Oops! Something went wrong.',
+      };
     case USER_INFO_SUCCESS:
-      return { ...state, userInfo: action.payload?.userInfo, loading: false };
+      return {
+        ...state,
+        userInfo: action.payload?.userInfo,
+        success: true,
+        loading: false,
+        fail: false,
+      };
     case SEND_FR_REQUEST:
-      return { ...state, sendingInvite: true };
+      return { ...state, inviteLoading: true };
     case SEND_FR_SUCCESS:
       return {
         ...state,
@@ -66,8 +77,8 @@ export default (
             action.payload?.newSent,
           ],
         },
-        sendingInvite: false,
-        inviteSuccess: true,
+        inviteLoading: false,
+        inviteSent: true,
       };
     case ACCEPT_FR_REQUEST:
       return { ...state };
@@ -85,10 +96,6 @@ export default (
         ...state,
         userInfo: {
           ...state.userInfo,
-          chatHistory: [
-            ...state.userInfo?.chatHistory,
-            (action.payload as any).message,
-          ],
         },
       };
     case CLEAR_CHAT_REQUEST:

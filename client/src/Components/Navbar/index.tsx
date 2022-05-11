@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Popover from '../Popover';
 import Logo from '../Logo';
-import { IGlobalState, IFRRequests } from '../../Interface/redux';
+import { IGlobalState, IFriends } from '../../Interface/redux';
 import DefaultAvatar from '../DefaultAvatar';
 import SearchUsers from '../SearchUsers';
 import { acceptInvite } from '../../Store/Actions/friends';
@@ -99,23 +99,19 @@ const Navbar = () => {
                     {userInfo?.pendingRequests &&
                     userInfo?.pendingRequests?.length > 0 ? (
                       <ListGroup>
-                        {userInfo?.pendingRequests.map(
-                          (pending: IFRRequests) => (
-                            <ListGroup.Item>
-                              <div className="d-flex align-items-center justify-content-between">
-                                <p className="mb-0">{pending.name}</p>
-                                <Button
-                                  size="sm"
-                                  onClick={() =>
-                                    acceptInviteHandler(pending._id)
-                                  }
-                                >
-                                  Accept
-                                </Button>
-                              </div>
-                            </ListGroup.Item>
-                          )
-                        )}
+                        {userInfo?.pendingRequests.map((pending: IFriends) => (
+                          <ListGroup.Item>
+                            <div className="d-flex align-items-center justify-content-between">
+                              <p className="mb-0">{pending.name}</p>
+                              <Button
+                                size="sm"
+                                onClick={() => acceptInviteHandler(pending._id)}
+                              >
+                                Accept
+                              </Button>
+                            </div>
+                          </ListGroup.Item>
+                        ))}
                       </ListGroup>
                     ) : (
                       <Container style={{ width: '100%', height: '150px' }}>
@@ -147,7 +143,7 @@ const Navbar = () => {
                       <Spinner animation="border" size="sm" />
                     ) : userInfo?.sentRequests ? (
                       <ListGroup>
-                        {userInfo?.sentRequests.map((request: IFRRequests) => (
+                        {userInfo?.sentRequests.map((request: IFriends) => (
                           <ListGroup.Item>
                             <div className="d-flex align-items-center justify-content-between">
                               {request?.profilePic ? (

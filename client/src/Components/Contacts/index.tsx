@@ -1,11 +1,11 @@
 import React from 'react';
 import { Dropdown, ListGroup } from 'react-bootstrap';
-import { IFRRequests } from '../../Interface/redux';
+import { IFriends } from '../../Interface/redux';
 import DefaultAvatar from '../DefaultAvatar';
 import DropdownToggle from 'react-bootstrap/esm/DropdownToggle';
 import ContactItem from './ContactItem';
 interface IProps {
-  contacts: IFRRequests[];
+  contacts: IFriends[];
 }
 
 const Contact: React.FC<IProps> = ({ contacts }) => {

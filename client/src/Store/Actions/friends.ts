@@ -5,7 +5,7 @@ import {
   IAcceptInvite,
   IAuthState,
   IDispatchFriends,
-  IFRRequests,
+  IFriends,
   IGlobalState,
   IReduxAction,
 } from '../../Interface/redux';
@@ -20,12 +20,9 @@ import {
   SEND_FR_FAIL,
   SEND_FR_REQUEST,
   SEND_FR_SUCCESS,
-  SET_CHAT_INFO,
   UPDATE_CHAT_HISTORY,
 } from '../Constants/friends';
 import { RootState } from '../store';
-import { SOCKET_INIT } from '../Constants/socket';
-import io from 'socket.io-client';
 
 interface IInviteResponse {
   name: string;
@@ -91,32 +88,6 @@ export const acceptInvite =
       dispatch({ type: ACCEPT_FR_FAIL });
     }
   };
-
-export const setChatInfo =
-  (info: IChatInfo) =>
-  (
-    dispatch: Dispatch<IReduxAction<IChatInfo>>,
-    getState: () => IGlobalState
-  ) => {
-    const {
-      userLogin: { userAccessToken, userInfo },
-      chatInfo,
-    } = getState();
-    if (chatInfo?.socket) {
-      chatInfo.socket.close();
-      chatInfo.socket = undefined;
-    }
-
-    const socket = io(
-      process.env.SOCKETURL || `https://chatapp-clone-shoebilyas.herokuapp.com/`
-    );
-    socket.emit('joinRoom', {
-      from: userInfo?._id,
-      to: info._id,
-    });
-    dispatch({ type: SET_CHAT_INFO, payload: { ...info, socket } });
-  };
-
 export const updateChatHistory =
   (newChat: any) => (dispatch: Dispatch<IReduxAction<any>>) => {
     dispatch({ type: UPDATE_CHAT_HISTORY, payload: { message: newChat } });

@@ -101,13 +101,10 @@ exports.deleteAllChats = async (req, res) => {
     const chatUpdateOptions = {
       $pull: { chatHistory: { room: { $in: [roomKey] } } },
     };
-    const chatHistoryCurrentUser = await User.findByIdAndUpdate(
-      req.user._id,
-      chatUpdateOptions,
-      { new: true }
-    ).select("chatHistory");
-    await User.findByIdAndUpdate(to, chatUpdateOptions);
-    res.status(200).json(chatHistoryCurrentUser);
+    await User.findByIdAndUpdate(req.user._id, chatUpdateOptions, {
+      new: true,
+    });
+    res.status(200).json({ success: true });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Something went wrong" });

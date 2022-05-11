@@ -1,14 +1,14 @@
 import axios from 'axios';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { IFRRequests, IGlobalState } from '../../Interface/redux';
+import { IFriends, IGlobalState } from '../../Interface/redux';
 import { getAuthConfig } from '../../Utilities/api';
 
 export default () => {
   const { userAccessToken, userInfo } = useSelector(
     (state: IGlobalState) => state.userLogin
   );
-  const [userList, setUserList] = React.useState<IFRRequests[]>([]);
+  const [userList, setUserList] = React.useState<IFriends[]>([]);
   const [isSearching, setIsSearching] = React.useState<boolean>(false);
 
   const onSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
