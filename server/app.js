@@ -39,4 +39,5 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
+
 module.exports = app;

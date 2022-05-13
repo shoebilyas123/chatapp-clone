@@ -8,5 +8,6 @@ router.get("/my-info", protect, AuthController.getCurrentUser);
 router.post("/password-change", protect, AuthController.changePassword);
 router.post("/profile-pic", protect, AuthController.updateProfilePic);
 router.put("/profile-pic/remove", protect, AuthController.removeProfilePic);
+router.get("/chats/:id", protect, AuthController.getChatsFor);
 
 module.exports = router;

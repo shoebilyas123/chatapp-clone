@@ -149,11 +149,12 @@ exports.getChatsFor = async (req, res) => {
     const connectTo = req.params.id;
     const roomId = createRoom(req.user._id, connectTo);
     const options = {
-      "chatHistory.room": { $eq: roomId },
+      "chatHistory.room": roomId,
     };
-    const chatsHistory = await User.findById(req.user._id, options);
+    const chatsHistory = await User.findById(re.user._id, options);
     res.status(200).json(chatsHistory.chatsHistory);
   } catch (error) {
-    req.json(error);
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };

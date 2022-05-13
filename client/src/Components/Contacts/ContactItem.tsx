@@ -4,7 +4,8 @@ import { IFriends } from '../../Interface/redux';
 import DefaultAvatar from '../DefaultAvatar';
 import { FiMoreVertical } from 'react-icons/fi';
 import { useDispatch } from 'react-redux';
-import { deleteAllChats, setChatInfo } from '../../Store/Actions/friends';
+import { deleteAllChats } from '../../Store/Actions/friends';
+import { setChatInfo } from '../../Store/Actions/chats';
 import { IChatInfo } from '../../Interface/chats';
 import ProfilePic from '../Settings/ProfilePic';
 
@@ -36,12 +37,7 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
   const dispatch: any = useDispatch();
 
   const selectFriendHandler = () => {
-    const chats: IChatInfo = {
-      ...friend,
-      chatHistory: [],
-    };
-
-    dispatch(setChatInfo(chats));
+    dispatch(setChatInfo(friend));
   };
 
   const deleteChatsHandler = () => {
