@@ -14,8 +14,18 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
   });
 } else {
-  app.get("/", (req, res) => {
-    res.send("Api for chatapp by Shoeb Ilyas is running...");
+  app.all("*", (req, res, next) => {
+    // res.status(404).json({
+    //   status: "fail",
+    //   error: "Request to invalid url",
+    // });
+
+    // const err = new Error("Request to invalid URL");
+    // err.statusCode = 404;
+    // err.status = "fail";
+    // If the express function receives an argument it will assume it to be an error.
+    // It will skip other middlewares and send it to our global error middleware
+    next(new AppError("Request failed to invalid URL", 404));
   });
 }
 

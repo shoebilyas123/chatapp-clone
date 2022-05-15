@@ -9,7 +9,6 @@ import {
   SET_CHAT_INFO_SUCCESS,
   SHOW_ONLINE,
 } from '../Constants/friends';
-import { RootState } from '../store';
 import io from 'socket.io-client';
 import { getAuthConfig } from '../../Utilities/api';
 
@@ -38,11 +37,7 @@ export const setChatInfo =
         chats.socket = undefined;
       }
 
-      const socket = io(
-        // 'http://localhost:8000'
-        // process.env.SOCKETURL ||
-        `https://chatapp-clone-shoebilyas.herokuapp.com/`
-      );
+      const socket = io(`https://chatapp-clone-shoebilyas.herokuapp.com/`);
       socket.emit('joinRoom', {
         from: userInfo?._id,
         to: friend._id,
