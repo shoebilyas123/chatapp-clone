@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Modal,
   Spinner,
@@ -6,12 +6,12 @@ import {
   InputGroup,
   FormControl,
   Button,
-} from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { sendInvite } from "../../Store/Actions/friends";
+} from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { sendInvite } from '../../Store/Actions/friends';
 
-import DefaultAvatar from "../DefaultAvatar";
-import useData from "./data";
+import DefaultAvatar from '../DefaultAvatar';
+import useData from './data';
 
 interface IProps {
   isOpen: boolean;
@@ -52,15 +52,15 @@ const SearchUsers: React.FC<IProps> = ({ isOpen, toggle }) => {
             >
               <div className="d-flex align-items-center">
                 <DefaultAvatar
-                  color={user.avatarColor || ""}
-                  text={user.name.slice(0, 1).toUpperCase()}
-                />{" "}
+                  color={user.avatarColor || ''}
+                  text={`${user?.name || ''}`.slice(0, 1).toUpperCase()}
+                />{' '}
                 <p className="ml-2 mb-0">{user.name}</p>
               </div>
               <Button
                 size="sm"
                 onClick={() =>
-                  dispatch(sendInvite(user._id, userInfo?._id || ""))
+                  dispatch(sendInvite(user._id, userInfo?._id || ''))
                 }
               >
                 Invite

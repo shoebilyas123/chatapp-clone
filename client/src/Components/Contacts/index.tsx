@@ -11,9 +11,8 @@ interface IProps {
 const Contact: React.FC<IProps> = ({ contacts }) => {
   return (
     <ListGroup className="m-2">
-      {contacts.map((ct) => (
-        <ContactItem friend={ct} key={ct._id} />
-      ))}
+      {contacts.length > 0 &&
+        contacts.map((ct) => <ContactItem friend={ct} key={ct._id} />)}
     </ListGroup>
   );
 };

@@ -1,12 +1,10 @@
 import React from 'react';
-import { Button, Card, Container, Row } from 'react-bootstrap';
+import { Card, Container, Row, Badge } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import moment from 'moment';
 
 import ChatMessage from './ChatMessage';
 import MessageInput from './MessageInput';
 import { IGlobalState } from '../../Interface/redux';
-import { DUMMY_DATA } from '../../data';
 
 interface IProps {
   chatHistory?: any;
@@ -27,7 +25,15 @@ const ChatBox: React.FC<IProps> = () => {
 
   return (
     <Card className="m-2 ml-0" style={{ height: '90%', maxHeight: '90%' }}>
-      <Card.Header>{chats?.name || ''}</Card.Header>
+      <Card.Header className="d-flex align-items-center">
+        {`${chats?.name || ''}`.slice(0, 1).toUpperCase() +
+          `${chats?.name}`.slice(1)}{' '}
+        {chats?.isOnline && (
+          <Badge bg="success" className="ml-2">
+            Online
+          </Badge>
+        )}
+      </Card.Header>
       <Card.Body>
         <Container>
           <Row>

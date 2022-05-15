@@ -38,19 +38,25 @@ exports.login = expressAsyncHandler(async (req, res, next) => {
 
   if (!email || !password) {
     next(new AppError("Email and password are required", 404));
+    return;
   }
 
-  const user = await User.findOne({ email });
+  const userAuth = await User.findOne({ email });
 
-  if (!user) {
+  if (!userAuth) {
     next(new AppError("User has either been deleted or does not exist.", 404));
+    return;
   }
-  const isPasswordValid = await user.isPasswordValid(user.password, password);
+  const isPasswordValid = await userAuth.isPasswordValid(
+    userAuth.password,
+    password
+  );
 
   if (!isPasswordValid) {
     next(new AppError("Please provide a correct password", 400));
     return;
   }
+  const user = await User.findOne({ email }).select("-password");
 
   const accessToken = signToken(user._id);
   res.status(201).json({
@@ -117,10 +123,9 @@ exports.getChatsFor = expressAsyncHandler(async (req, res, next) => {
   const connectTo = req.params.id;
 
   const roomId = createRoom(req.user._id, connectTo);
-  const options = {
-    "chatHistory.room": roomId,
-  };
+  const options = { chatHistory: { $elemMatch: { room: roomId } } };
 
+  const user = await User.findById(req.user._id);
   const chatsHistory = await User.findById(req.user._id, options);
 
   res.status(200).json(chatsHistory.chatHistory);

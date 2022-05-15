@@ -7,6 +7,7 @@ import {
   SET_CHAT_INFO_FAILURE,
   SET_CHAT_INFO_REQUEST,
   SET_CHAT_INFO_SUCCESS,
+  SHOW_ONLINE,
   UPDATE_CHAT_HISTORY,
 } from '../Constants/friends';
 
@@ -37,7 +38,6 @@ export default (
         chatsSuccess: false,
       };
     case UPDATE_CHAT_HISTORY:
-      console.log(action.payload?.message);
       return {
         ...state,
         chatHistory: [...state?.chatHistory, action.payload?.message],
@@ -51,6 +51,8 @@ export default (
         chatsLoading: false,
         chatsSuccess: true,
       };
+    case SHOW_ONLINE:
+      return { ...state, isOnline: true };
     default:
       return { ...state };
   }

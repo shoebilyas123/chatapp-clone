@@ -7,6 +7,7 @@ import {
   SET_CHAT_INFO_FAILURE,
   SET_CHAT_INFO_REQUEST,
   SET_CHAT_INFO_SUCCESS,
+  SHOW_ONLINE,
 } from '../Constants/friends';
 import { RootState } from '../store';
 import io from 'socket.io-client';
@@ -38,9 +39,9 @@ export const setChatInfo =
       }
 
       const socket = io(
-        'http://localhost:8000'
+        // 'http://localhost:8000'
         // process.env.SOCKETURL ||
-        // `https://chatapp-clone-shoebilyas.herokuapp.com/`
+        `https://chatapp-clone-shoebilyas.herokuapp.com/`
       );
       socket.emit('joinRoom', {
         from: userInfo?._id,
@@ -58,4 +59,9 @@ export const setChatInfo =
         payload: { chatsError: err.response.data.error },
       });
     }
+  };
+
+export const showOnline =
+  () => async (dispatch: Dispatch<IReduxAction<IChatInfo>>) => {
+    dispatch({ type: SHOW_ONLINE });
   };

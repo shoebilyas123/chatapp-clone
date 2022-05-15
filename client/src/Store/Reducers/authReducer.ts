@@ -48,7 +48,7 @@ export default (
         success: true,
         loading: false,
         userInfo: action.payload?.userInfo,
-        accessToken: action.payload?.accessToken,
+        userAccessToken: action.payload?.accessToken,
       };
     case LOGIN_FAIL || USER_INFO_FAIL:
       return {

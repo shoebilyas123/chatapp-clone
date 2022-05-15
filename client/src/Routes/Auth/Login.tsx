@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ScreenBox from '../../Components/ScreenBox';
 import { IGlobalState } from '../../Interface/redux';
-import { login } from '../../Store/Actions/auth';
+import { getMyInfo, login } from '../../Store/Actions/auth';
 
 interface IState {
   email: string;
@@ -33,10 +33,10 @@ const Login = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (userAccessToken || userInfo) {
+    if (userAccessToken) {
       navigate('/');
     }
-  }, [userAccessToken, userInfo]);
+  }, [userAccessToken]);
 
   const loginHandler = () => {
     dispatch(login({ email, password }));

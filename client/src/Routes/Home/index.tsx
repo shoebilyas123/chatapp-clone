@@ -1,26 +1,17 @@
 import axios from 'axios';
 import React, { Dispatch } from 'react';
-import {
-  Button,
-  Col,
-  Container,
-  FormControl,
-  InputGroup,
-  ListGroup,
-  Modal,
-  Row,
-  Spinner,
-} from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../Components/Navbar';
 import ScreenBox from '../../Components/ScreenBox';
-import { logout } from '../../Store/Actions/auth';
+import { getMyInfo } from '../../Store/Actions/auth';
 import { updateChatHistory } from '../../Store/Actions/friends';
 import Contacts from '../../Components/Contacts';
 import useData from './data';
 import ChatBox from '../../Components/ChatBox';
 import ScreenLoader from '../../Components/ScreenLoader';
+import { showOnline } from '../../Store/Actions/chats';
 
 const Home = () => {
   const { state, reduxState } = useData();
@@ -31,11 +22,17 @@ const Home = () => {
   React.useEffect(() => {
     if (!userAccessToken) {
       navigate('/login');
+    } else {
+      dispatch(getMyInfo());
     }
   }, [userAccessToken]);
 
   React.useEffect(() => {
     if (chats?.socket) {
+      chats?.socket.on('showOnline', () => {
+        dispatch(showOnline());
+        chats.socket.off('showOnline');
+      });
       chats?.socket.on('messageFromServer', (data: any) => {
         const transformedMsg = {
           ...data,
@@ -55,7 +52,7 @@ const Home = () => {
         <Container>
           <Row md={12}>
             <Col md={4} style={{ height: '100vh', overflowY: 'auto' }}>
-              {userInfo?.friends && (
+              {userInfo && userInfo?.friends && (
                 <Contacts contacts={userInfo?.friends || []} />
               )}
             </Col>

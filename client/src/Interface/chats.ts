@@ -8,6 +8,7 @@ export interface IChatInfo {
   chatsSuccess: boolean;
   chatsError: string;
   socket?: any;
+  isOnline: boolean;
 }
 
 export interface IChat {

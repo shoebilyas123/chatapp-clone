@@ -99,19 +99,22 @@ const Navbar = () => {
                     {userInfo?.pendingRequests &&
                     userInfo?.pendingRequests?.length > 0 ? (
                       <ListGroup>
-                        {userInfo?.pendingRequests.map((pending: IFriends) => (
-                          <ListGroup.Item>
-                            <div className="d-flex align-items-center justify-content-between">
-                              <p className="mb-0">{pending.name}</p>
-                              <Button
-                                size="sm"
-                                onClick={() => acceptInviteHandler(pending._id)}
-                              >
-                                Accept
-                              </Button>
-                            </div>
-                          </ListGroup.Item>
-                        ))}
+                        {userInfo?.pendingRequests.length > 0 &&
+                          userInfo?.pendingRequests.map((pending: IFriends) => (
+                            <ListGroup.Item>
+                              <div className="d-flex align-items-center justify-content-between">
+                                <p className="mb-0">{pending.name}</p>
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    acceptInviteHandler(pending._id)
+                                  }
+                                >
+                                  Accept
+                                </Button>
+                              </div>
+                            </ListGroup.Item>
+                          ))}
                       </ListGroup>
                     ) : (
                       <Container style={{ width: '100%', height: '150px' }}>
@@ -143,24 +146,27 @@ const Navbar = () => {
                       <Spinner animation="border" size="sm" />
                     ) : userInfo?.sentRequests ? (
                       <ListGroup>
-                        {userInfo?.sentRequests.map((request: IFriends) => (
-                          <ListGroup.Item>
-                            <div className="d-flex align-items-center justify-content-between">
-                              {request?.profilePic ? (
-                                <ProfilePic content={request.profilePic} />
-                              ) : (
-                                <DefaultAvatar
-                                  text={request.name.slice(0, 1).toUpperCase()}
-                                  color={request.avatarColor || ''}
-                                  width={'3rem'}
-                                  height="3rem"
-                                />
-                              )}
-                              <p className="mb-0">{request.name}</p>
-                              <Button size="sm">Unsend</Button>
-                            </div>
-                          </ListGroup.Item>
-                        ))}
+                        {userInfo?.sentRequests.length > 0 &&
+                          userInfo?.sentRequests.map((request: IFriends) => (
+                            <ListGroup.Item>
+                              <div className="d-flex align-items-center justify-content-between">
+                                {request?.profilePic ? (
+                                  <ProfilePic content={request.profilePic} />
+                                ) : (
+                                  <DefaultAvatar
+                                    text={`${request?.name || ''}`
+                                      .slice(0, 1)
+                                      .toUpperCase()}
+                                    color={request.avatarColor || ''}
+                                    width={'3rem'}
+                                    height="3rem"
+                                  />
+                                )}
+                                <p className="mb-0">{request.name}</p>
+                                <Button size="sm">Unsend</Button>
+                              </div>
+                            </ListGroup.Item>
+                          ))}
                       </ListGroup>
                     ) : (
                       <Container style={{ width: '100%', height: '150px' }}>

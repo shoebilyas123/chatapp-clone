@@ -11,6 +11,8 @@ export const INITIAL_USER_LOGIN: IGlobalState['userLogin'] = {
     friends: [],
     avatarColor: '',
   },
+  loading: false,
+  success: false,
   userAccessToken: '',
   inviteLoading: false,
   inviteSent: false,
@@ -25,4 +27,5 @@ export const INITIAL_CHAT_INFO: IGlobalState['chats'] = {
   profilePic: '',
   name: '',
   _id: '',
+  isOnline: false,
 };

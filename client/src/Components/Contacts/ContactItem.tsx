@@ -50,7 +50,7 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
           <ProfilePic content={friend.profilePic} />
         ) : (
           <DefaultAvatar
-            text={friend.name.slice(0, 1).toUpperCase()}
+            text={`${friend?.name || ''}`.slice(0, 1).toUpperCase()}
             color={friend.avatarColor || ''}
             width={'3rem'}
             height="3rem"
@@ -61,7 +61,8 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
           onClick={selectFriendHandler}
           style={{ cursor: 'pointer' }}
         >
-          {friend.name.slice(0, 1).toUpperCase() + friend.name.slice(1)}
+          {`${friend?.name || ''}`.slice(0, 1).toUpperCase() +
+            `${friend?.name || ''}`.slice(1)}
         </span>
       </div>
       <Dropdown className="d-inline mx-2">

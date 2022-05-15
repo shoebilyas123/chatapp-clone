@@ -9,6 +9,20 @@ module.exports = (io) => {
       socket.leave(Array.from(socket.rooms)[1]);
       socket.join(createRoom(data.from, data.to));
 
+      // const socketsConnected = await io
+      //   .in(createRoom(data.from, data.to))
+      //   .allSockets();
+
+      // console.log(socketsConnected);
+      // console.log(Array.from(socketsConnected));
+      // console.log(Array.from(socketsConnected).length >= 2);
+
+      // if (Array.from(socket.rooms).length > 2) {
+      //   io.to(createRoom(data.from, data.to)).emit("showOnline");
+      // } else {
+      // }
+      socket.to(createRoom(data.from, data.to)).emit("showOnline");
+
       socket.on("messageFromClient", async (data) => {
         const message = {
           message: data.message,

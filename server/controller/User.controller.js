@@ -78,7 +78,6 @@ exports.deleteAllChats = expressAsyncHandler(async (req, res) => {
   const { to } = req.body;
 
   const roomKey = createRoom(req.user._id, to);
-  console.log(roomKey);
   const chatUpdateOptions = {
     $pull: { chatHistory: { room: { $in: [roomKey] } } },
   };

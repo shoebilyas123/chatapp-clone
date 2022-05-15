@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
 import { ILoginPayload } from '../../API/auth';
-import { IAuthState, IReduxAction } from '../../Interface/redux';
+import { IAuthState, IGlobalState, IReduxAction } from '../../Interface/redux';
 import { ILoginResponse } from '../../Interface/responses';
 import { getAuthConfig } from '../../Utilities/api';
 import {
@@ -30,7 +30,6 @@ export const login =
       });
       localStorage.setItem('userAccessToken', JSON.stringify(data.accessToken));
     } catch (error) {
-      console.log(error);
       dispatch({ type: LOGIN_FAIL });
     }
   };
@@ -49,11 +48,14 @@ export const getMyInfo =
   ) => {
     try {
       dispatch({ type: USER_INFO_REQUEST });
+
       const {
         userLogin: { userAccessToken },
       } = getState();
-      const config = getAuthConfig({ token: userAccessToken || '' });
+
+      const config = getAuthConfig({ token: userAccessToken });
       const { data } = await axios.get('/api/v1/auth/my-info', config);
+
       dispatch({ type: USER_INFO_SUCCESS, payload: { userInfo: data } });
     } catch (error) {
       console.log(error);
