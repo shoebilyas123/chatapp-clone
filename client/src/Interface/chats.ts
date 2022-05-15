@@ -9,3 +9,11 @@ export interface IChatInfo {
   chatsError: string;
   socket?: any;
 }
+
+export interface IChat {
+  from: string;
+  message: string;
+  room: string;
+  sentAt: Date;
+  socketId: string;
+}

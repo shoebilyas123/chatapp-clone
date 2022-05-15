@@ -1,9 +1,9 @@
 import React, { Ref } from 'react';
 import { Dropdown, ListGroup } from 'react-bootstrap';
-import { IFriends } from '../../Interface/redux';
+import { IFriends, IGlobalState } from '../../Interface/redux';
 import DefaultAvatar from '../DefaultAvatar';
 import { FiMoreVertical } from 'react-icons/fi';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { deleteAllChats } from '../../Store/Actions/friends';
 import { setChatInfo } from '../../Store/Actions/chats';
 import { IChatInfo } from '../../Interface/chats';
@@ -35,7 +35,6 @@ const CustomToggle: any = React.forwardRef(
 
 const ContactItem: React.FC<IProps> = ({ friend }) => {
   const dispatch: any = useDispatch();
-
   const selectFriendHandler = () => {
     dispatch(setChatInfo(friend));
   };

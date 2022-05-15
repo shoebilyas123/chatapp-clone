@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
-import { IChatInfo } from '../../Interface/chats';
+import { IChat, IChatInfo } from '../../Interface/chats';
 import {
   IAcceptInvite,
   IAuthState,
@@ -89,7 +89,7 @@ export const acceptInvite =
     }
   };
 export const updateChatHistory =
-  (newChat: any) => (dispatch: Dispatch<IReduxAction<any>>) => {
+  (newChat: IChat) => async (dispatch: Dispatch<IReduxAction<any>>) => {
     dispatch({ type: UPDATE_CHAT_HISTORY, payload: { message: newChat } });
   };
 

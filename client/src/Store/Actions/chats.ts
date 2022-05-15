@@ -31,11 +31,6 @@ export const setChatInfo =
         `/api/v1/auth/chats/${friend._id}`,
         config
       );
-      dispatch({
-        type: SET_CHAT_INFO_SUCCESS,
-        //   @ts-ignore-nextline
-        payload: { ...friend, chatHistory: response.data || [] },
-      });
 
       if (chats?.socket) {
         chats.socket.close();
@@ -43,18 +38,24 @@ export const setChatInfo =
       }
 
       const socket = io(
-        process.env.SOCKETURL ||
-          `https://chatapp-clone-shoebilyas.herokuapp.com/`
+        'http://localhost:8000'
+        // process.env.SOCKETURL ||
+        // `https://chatapp-clone-shoebilyas.herokuapp.com/`
       );
       socket.emit('joinRoom', {
         from: userInfo?._id,
         to: friend._id,
       });
+      dispatch({
+        type: SET_CHAT_INFO_SUCCESS,
+        //   @ts-ignore-nextline
+        payload: { ...friend, socket, chatHistory: response.data || [] },
+      });
     } catch (err) {
       dispatch({
         type: SET_CHAT_INFO_FAILURE,
         // @ts-ignore-nextline
-        payload: { chatsError: err.response.data.message },
+        payload: { chatsError: err.response.data.error },
       });
     }
   };

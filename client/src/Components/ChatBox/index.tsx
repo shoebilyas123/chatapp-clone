@@ -25,10 +25,6 @@ const ChatBox: React.FC<IProps> = () => {
     chats?.scrollTo(0, chats.scrollHeight);
   }, []);
 
-  React.useEffect(() => {
-    console.log(chats);
-  }, [chats]);
-
   return (
     <Card className="m-2 ml-0" style={{ height: '90%', maxHeight: '90%' }}>
       <Card.Header>{chats?.name || ''}</Card.Header>
@@ -45,6 +41,7 @@ const ChatBox: React.FC<IProps> = () => {
               id="chat-message-container-chat-app-by-shoeb-ilyas"
             >
               {chats &&
+                chats.chatHistory.length > 0 &&
                 (chats?.chatHistory || []).map((data: any) => (
                   <ChatMessage
                     message={data.message}

@@ -91,24 +91,7 @@ export default (
           friends: action.payload?.friends,
         },
       };
-    case UPDATE_CHAT_HISTORY:
-      return {
-        ...state,
-        userInfo: {
-          ...state.userInfo,
-        },
-      };
-    case CLEAR_CHAT_REQUEST:
-      return { ...state, chatsLoading: true };
-    case CLEAR_CHAT_SUCCESS:
-      return {
-        ...state,
-        userInfo: {
-          ...state.userInfo,
-          chatHistory: (action.payload as any).chatHistory,
-        },
-        chatsLoading: false,
-      };
+
     case LOGOUT:
       return {};
     case SET_PROFILE_PIC:
