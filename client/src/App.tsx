@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IAuthData, IGlobalState, IReduxAction } from './Interface/redux';
 import { getMyInfo } from './Store/Actions/auth';
+import Register from './Routes/Auth/Register';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route element={<Home />} path="/" />
           <Route element={<Login />} path="/login" />
+          <Route element={<Register />} path="/register" />
         </Routes>
       </BrowserRouter>
     </>

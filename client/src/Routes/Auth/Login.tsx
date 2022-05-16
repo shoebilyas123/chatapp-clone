@@ -50,7 +50,10 @@ const Login = () => {
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>
-              No account? <Button size="sm">Sign Up</Button>
+              No account?{' '}
+              <Button size="sm" onClick={() => navigate('/register')}>
+                Sign Up
+              </Button>
             </Navbar.Text>
           </Navbar.Collapse>
         </Container>

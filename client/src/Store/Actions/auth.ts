@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
-import { ILoginPayload } from '../../API/auth';
+import { ILoginPayload, IRegisterPayload } from '../../API/auth';
 import { IAuthState, IGlobalState, IReduxAction } from '../../Interface/redux';
 import { ILoginResponse } from '../../Interface/responses';
 import { getAuthConfig } from '../../Utilities/api';
@@ -22,6 +22,25 @@ export const login =
       dispatch({ type: LOGIN_REQUEST });
       const { data } = await axios.post<ILoginResponse>(
         '/api/v1/auth/login',
+        userPayload
+      );
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: data,
+      });
+      localStorage.setItem('userAccessToken', JSON.stringify(data.accessToken));
+    } catch (error) {
+      dispatch({ type: LOGIN_FAIL });
+    }
+  };
+
+export const register =
+  (userPayload: IRegisterPayload) =>
+  async (dispatch: Dispatch<IReduxAction<IAuthState>>) => {
+    try {
+      dispatch({ type: LOGIN_REQUEST });
+      const { data } = await axios.post<ILoginResponse>(
+        '/api/v1/auth/register',
         userPayload
       );
       dispatch({

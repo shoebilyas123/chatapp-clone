@@ -15,16 +15,6 @@ if (process.env.NODE_ENV === "production") {
   });
 } else {
   app.all("*", (req, res, next) => {
-    // res.status(404).json({
-    //   status: "fail",
-    //   error: "Request to invalid url",
-    // });
-
-    // const err = new Error("Request to invalid URL");
-    // err.statusCode = 404;
-    // err.status = "fail";
-    // If the express function receives an argument it will assume it to be an error.
-    // It will skip other middlewares and send it to our global error middleware
     next(new AppError("Request failed to invalid URL", 404));
   });
 }
