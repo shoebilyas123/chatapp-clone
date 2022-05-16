@@ -37,7 +37,10 @@ export const setChatInfo =
         chats.socket = undefined;
       }
 
-      const socket = io(`https://chatapp-clone-shoebilyas.herokuapp.com/`);
+      const socket = io(
+        'http://localhost:8000'
+        // `https://chatapp-clone-shoebilyas.herokuapp.com/`
+      );
       socket.emit('joinRoom', {
         from: userInfo?._id,
         to: friend._id,

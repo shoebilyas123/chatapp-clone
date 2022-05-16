@@ -123,10 +123,26 @@ exports.getChatsFor = expressAsyncHandler(async (req, res, next) => {
   const connectTo = req.params.id;
 
   const roomId = createRoom(req.user._id, connectTo);
-  const options = { chatHistory: { $elemMatch: { room: roomId } } };
 
-  const user = await User.findById(req.user._id);
-  const chatsHistory = await User.findById(req.user._id, options);
-
-  res.status(200).json(chatsHistory.chatHistory);
+  const chatHistory = await User.aggregate([
+    {
+      $match: { _id: req.user._id },
+    },
+    {
+      $project: {
+        chatHistory: 1,
+        chatHistory: {
+          $filter: {
+            input: "$chatHistory",
+            as: "chatMessage",
+            cond: {
+              $eq: ["$$chatMessage.room", roomId],
+            },
+          },
+        },
+      },
+    },
+  ]);
+  const chats = chatHistory[0].chatHistory;
+  res.status(200).json(chats);
 });

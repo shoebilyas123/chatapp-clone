@@ -24,6 +24,7 @@ module.exports = (io) => {
       socket.to(createRoom(data.from, data.to)).emit("showOnline");
 
       socket.on("messageFromClient", async (data) => {
+        console.log("HELLO");
         const message = {
           message: data.message,
           sentAt: Date.now(),
