@@ -15,9 +15,18 @@ const app = express();
 const awsURL =
   "https://shoebilyas-chats-profile-pic.s3.ap-south-1.amazonaws.com";
 
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
+
 app.use(
   cors({
-    origin: awsURL,
+    origin: "*",
   })
 );
 app.use(express.json());
@@ -29,17 +38,20 @@ app.use(xss());
 app.use(mongoSanitize());
 // Set security http headers
 app.use(
-  helmet({
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        // other directives
+  helmet()
+  //   {
+  //   contentSecurityPolicy: {
+  //     useDefaults: true,
+  //     directives: {
+  //       // other directives
 
-        "img-src": ["'self'", awsURL],
-      },
-    },
-  })
+  //       "img-src": ["'self'", awsURL],
+  //     },
+  //   },
+  //   // referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  // }
 );
+// strict-origin-when-cross-origin
 
 // Limit requests from same API
 const limiter = rateLimit({
@@ -52,30 +64,6 @@ app.use("/api", limiter);
 
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
-
-app.use(function (req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", awsURL);
-
-  // Request methods you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-
-  // Request headers you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
-  );
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader("Access-Control-Allow-Credentials", true);
-
-  // Pass to next layer of middleware
-  next();
-});
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);

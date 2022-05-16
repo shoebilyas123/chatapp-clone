@@ -15,13 +15,12 @@ exports.getS3SignedURL = async (fileName, fileType, userId) => {
     signatureVersion: "v4",
   });
 
-  const name = fileName + "." + fileType + userId;
+  const name = fileName + userId + "." + fileType;
 
   const params = {
     Bucket: bucketName,
     Key: name,
     Expires: 3 * 60,
   };
-  console.log(params);
   return await s3.getSignedUrlPromise("putObject", params);
 };

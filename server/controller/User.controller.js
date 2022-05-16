@@ -91,7 +91,8 @@ exports.deleteAllChats = expressAsyncHandler(async (req, res) => {
 
 exports.uploadProfilePic = expressAsyncHandler(async (req, res) => {
   const fileName = req.query.fileName;
-  const fileType = req.query.fileType;
+  const fileType = req.query.fileType.split("/")[1];
+  console.log({ fileType });
   const url = await getS3SignedURL(fileName, fileType, req.user._id);
   res.status(200).json({ url });
 });
