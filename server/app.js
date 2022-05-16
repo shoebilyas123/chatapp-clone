@@ -12,9 +12,12 @@ const userRoutes = require("./routes/user.routes");
 const errorController = require("./controller/error.controller");
 const app = express();
 
+const awsURL =
+  "https://shoebilyas-chats-profile-pic.s3.ap-south-1.amazonaws.com";
+
 app.use(
   cors({
-    origin: "*",
+    origin: awsURL,
   })
 );
 app.use(express.json());
@@ -32,10 +35,7 @@ app.use(
       directives: {
         // other directives
 
-        "img-src": [
-          "'self'",
-          "https://shoebilyas-chats-profile-pic.s3.ap-south-1.amazonaws.com",
-        ],
+        "img-src": ["'self'", awsURL],
       },
     },
   })
@@ -47,10 +47,35 @@ const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   message: "Too many requests from this IP, please try again in an hour!",
 });
+
 app.use("/api", limiter);
 
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader("Access-Control-Allow-Origin", awsURL);
+
+  // Request methods you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+
+  // Request headers you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader("Access-Control-Allow-Credentials", true);
+
+  // Pass to next layer of middleware
+  next();
+});
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
