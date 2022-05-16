@@ -25,21 +25,7 @@ app.use(xss());
 // Data sanitization against noSQL query injectoin
 app.use(mongoSanitize());
 // Set security http headers
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        // other directives
-
-        "img-src": [
-          "'self'",
-          "https://shoebilyas-chats-profile-pic.s3.ap-south-1.amazonaws.com/",
-        ],
-      },
-    },
-  })
-);
+app.use(helmet());
 
 // Limit requests from same API
 const limiter = rateLimit({

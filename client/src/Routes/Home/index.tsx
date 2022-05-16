@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { Dispatch } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
@@ -14,7 +13,7 @@ import ScreenLoader from '../../Components/ScreenLoader';
 import { showOnline } from '../../Store/Actions/chats';
 
 const Home = () => {
-  const { state, reduxState } = useData();
+  const { reduxState } = useData();
   const { userInfo, userAccessToken, chats, loading } = reduxState;
   const dispatch: Dispatch<any> = useDispatch();
   const navigate = useNavigate();

@@ -3,10 +3,8 @@ import React, { Dispatch } from 'react';
 import {
   Button,
   Card,
-  Col,
   Container,
   Form,
-  InputGroup,
   Navbar,
   Row,
   Spinner,
@@ -15,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ScreenBox from '../../Components/ScreenBox';
 import { IGlobalState } from '../../Interface/redux';
-import { getMyInfo, login, register } from '../../Store/Actions/auth';
+import { register } from '../../Store/Actions/auth';
 
 interface IState {
   email: string;
@@ -28,7 +26,7 @@ const Register = () => {
   const [email, setEmail] = React.useState<IState['email']>('');
   const [password, setPassword] = React.useState<IState['password']>('');
   const [name, setName] = React.useState<IState['name']>('');
-  const { userAccessToken, userInfo, loading } = useSelector(
+  const { userAccessToken, loading } = useSelector(
     (state: IGlobalState) => state.userLogin
   );
   const dispatch: Dispatch<any> = useDispatch();

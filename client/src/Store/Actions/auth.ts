@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
 import { ILoginPayload, IRegisterPayload } from '../../API/auth';
-import { IAuthState, IGlobalState, IReduxAction } from '../../Interface/redux';
+import { IAuthState, IReduxAction } from '../../Interface/redux';
 import { ILoginResponse } from '../../Interface/responses';
 import { getAuthConfig } from '../../Utilities/api';
 import {
