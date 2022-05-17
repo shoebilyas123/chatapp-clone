@@ -198,12 +198,11 @@ const Navbar = () => {
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                <Dropdown.Item>Delete Chats</Dropdown.Item>
-                <Dropdown.Item onClick={logoutHandler}>Logout</Dropdown.Item>
-                <Dropdown.Divider />
                 <Dropdown.Item onClick={toggleSettingsModal}>
                   Settings
                 </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={logoutHandler}>Logout</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Nav>

@@ -23,7 +23,7 @@ const SearchUsers: React.FC<IProps> = ({ isOpen, toggle }) => {
 
   const { state, reduxState, onSearchChange } = useData();
   const { isSearching, userList } = state;
-  const { userInfo } = reduxState;
+  const { userInfo, loading } = reduxState;
 
   return (
     <Modal show={isOpen} onHide={toggle}>

@@ -6,6 +6,7 @@ import {
   Form,
   Modal,
   ModalBody,
+  ModalFooter,
   ModalHeader,
   Row,
   Spinner,
@@ -22,6 +23,7 @@ import {
   REMOVE_PROFILE_PIC,
   SET_PROFILE_PIC,
 } from '../../Store/Constants/auth';
+import { updateUserInfo } from '../../Store/Actions/auth';
 
 interface IProps {
   isOpen: boolean;
@@ -36,6 +38,7 @@ const Settings: React.FC<IProps> = ({ isOpen, toggle }) => {
 
   const [name, setName] = React.useState<string>(userInfo?.name || '');
   const [email, setEmail] = React.useState<string>(userInfo?.email || '');
+  console.log({ ...userInfo });
 
   const [profilePic, setProfilePic] = React.useState<any>();
   const [selectPic, setSelectPic] = React.useState<boolean>();
@@ -123,7 +126,7 @@ const Settings: React.FC<IProps> = ({ isOpen, toggle }) => {
                   />
                 )}
               </Col>
-              <Col md={8}>
+              {/* <Col md={8}>
                 <Button
                   style={{ width: '100%' }}
                   size="sm"
@@ -151,10 +154,56 @@ const Settings: React.FC<IProps> = ({ isOpen, toggle }) => {
                     Add New <MdModeEditOutline className="ml-1" />
                   </div>
                 </Button>
+              </Col> */}
+            </Row>
+            <Row className="mt-3">
+              <Col md={12}>
+                <Form.Group className="mb-3" controlId="formBasicEmailSetting">
+                  <Form.Label>Email Address</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Change Your Email..."
+                    value={email}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setEmail(e.target.value)
+                    }
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group className="mb-3" controlId="formBasicNameSetting">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    type="default"
+                    placeholder="Change Your Name..."
+                    value={name}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setName(e.target.value)
+                    }
+                  />
+                </Form.Group>
               </Col>
             </Row>
           </Container>
         </ModalBody>
+        <ModalFooter>
+          <Row>
+            <Col>
+              <Button
+                onClick={() => {
+                  dispatch(updateUserInfo({ email, name }));
+                }}
+              >
+                Update
+              </Button>
+            </Col>
+            <Col>
+              <Button variant="secondary" onClick={toggle}>
+                Close
+              </Button>
+            </Col>
+          </Row>
+        </ModalFooter>
       </Modal>
       <Modal show={selectPic} onHide={toggleSelectPic}>
         <Modal.Header>

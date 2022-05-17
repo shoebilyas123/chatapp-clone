@@ -14,6 +14,8 @@ import {
   LOGOUT,
   REMOVE_PROFILE_PIC,
   SET_PROFILE_PIC,
+  UPDATE_USER_REQUEST,
+  UPDATE_USER_SUCCESS,
   USER_INFO_FAIL,
   USER_INFO_REQUEST,
   USER_INFO_SUCCESS,
@@ -27,6 +29,10 @@ import {
   UPDATE_CHAT_HISTORY,
   CLEAR_CHAT_SUCCESS,
   CLEAR_CHAT_REQUEST,
+  SEND_FR_FAIL,
+  REMOVE_FRIEND_REQUEST,
+  REMOVE_FRIEND_SUCCESS,
+  REMOVE_FRIEND_FAIL,
 } from '../Constants/friends';
 
 export default (
@@ -40,7 +46,7 @@ export default (
   >
 ) => {
   switch (action.type) {
-    case LOGIN_REQUEST || USER_INFO_REQUEST:
+    case LOGIN_REQUEST || USER_INFO_REQUEST || UPDATE_USER_REQUEST:
       return { ...state, loading: true };
     case LOGIN_SUCCESS:
       return {
@@ -50,7 +56,7 @@ export default (
         userInfo: action.payload?.userInfo,
         userAccessToken: action.payload?.accessToken,
       };
-    case LOGIN_FAIL || USER_INFO_FAIL:
+    case LOGIN_FAIL || USER_INFO_FAIL || USER_INFO_FAIL:
       return {
         ...state,
         success: false,
@@ -65,11 +71,21 @@ export default (
         loading: false,
         fail: false,
       };
+    case UPDATE_USER_SUCCESS:
+      return {
+        ...state,
+        userInfo: action.payload?.userInfo,
+        success: true,
+        loading: false,
+        fail: false,
+      };
     case SEND_FR_REQUEST:
-      return { ...state, inviteLoading: true };
+      return { ...state, loading: true };
     case SEND_FR_SUCCESS:
       return {
         ...state,
+        loading: false,
+        success: true,
         userInfo: {
           ...state.userInfo,
           sentRequests: [
@@ -77,20 +93,41 @@ export default (
             action.payload?.newSent,
           ],
         },
-        inviteLoading: false,
-        inviteSent: true,
       };
+    case SEND_FR_FAIL: {
+      return { ...state, loading: false, success: false };
+    }
     case ACCEPT_FR_REQUEST:
-      return { ...state };
+      return { ...state, loading: true };
     case ACCEPT_FR_SUCCESS:
       return {
         ...state,
+        loading: false,
+        success: true,
+        error: '',
         userInfo: {
           ...state.userInfo,
           pendingRequests: action.payload?.pendingRequests,
           friends: action.payload?.friends,
         },
       };
+    case REMOVE_FRIEND_REQUEST:
+      return { ...state, loading: true };
+    case REMOVE_FRIEND_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        success: true,
+        error: '',
+        userInfo: {
+          ...state.userInfo,
+          pendingRequests: action.payload?.pendingRequests,
+          friends: action.payload?.friends,
+        },
+      };
+    case REMOVE_FRIEND_FAIL: {
+      return { ...state, loading: false, success: false };
+    }
 
     case LOGOUT:
       return {};

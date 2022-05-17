@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
+import { toast } from 'react-toastify';
 import { IChat, IChatInfo } from '../../Interface/chats';
 import {
   IAcceptInvite,
@@ -10,6 +11,8 @@ import {
   IReduxAction,
 } from '../../Interface/redux';
 import { getAuthConfig } from '../../Utilities/api';
+import { fireToast } from '../../Utilities/toast';
+
 import {
   ACCEPT_FR_FAIL,
   ACCEPT_FR_REQUEST,
@@ -17,6 +20,9 @@ import {
   CLEAR_CHAT_FAIL,
   CLEAR_CHAT_REQUEST,
   CLEAR_CHAT_SUCCESS,
+  REMOVE_FRIEND_FAIL,
+  REMOVE_FRIEND_REQUEST,
+  REMOVE_FRIEND_SUCCESS,
   SEND_FR_FAIL,
   SEND_FR_REQUEST,
   SEND_FR_SUCCESS,
@@ -51,8 +57,10 @@ export const sendInvite =
       );
 
       dispatch({ type: SEND_FR_SUCCESS, payload: { newSent: data.sent } });
+      fireToast({ message: 'Invite sent successfully' }).success();
     } catch (error) {
       console.log(error);
+      fireToast({ message: 'Something went wrong!' }).error();
       dispatch({ type: SEND_FR_FAIL });
     }
   };
@@ -83,8 +91,14 @@ export const acceptInvite =
           pendingRequests: data.pendingRequests,
         },
       });
+      fireToast({
+        message: `${
+          (data.friends || [])[data.friends.length - 1].name || ''
+        } is now your friend`,
+      }).success();
     } catch (error) {
       console.log(error);
+      fireToast({ message: 'Something went wrong' }).error();
       dispatch({ type: ACCEPT_FR_FAIL });
     }
   };
@@ -118,5 +132,41 @@ export const deleteAllChats =
     } catch (err) {
       dispatch({ type: CLEAR_CHAT_FAIL });
       console.log({ err });
+    }
+  };
+
+export const removeFriend =
+  (removeId: string, name: string) =>
+  async (
+    dispatch: Dispatch<IReduxAction<IAcceptInvite>>,
+    getState: () => RootState
+  ) => {
+    try {
+      dispatch({ type: REMOVE_FRIEND_REQUEST });
+      const {
+        userLogin: { userAccessToken },
+      } = getState();
+      const config = getAuthConfig({ token: userAccessToken || '' });
+      const payload = { removeId };
+      const { data } = await axios.post(
+        '/api/v1/auth/friends/remove',
+        payload,
+        config
+      );
+
+      dispatch({
+        type: REMOVE_FRIEND_SUCCESS,
+        payload: {
+          friends: data.friends,
+          pendingRequests: data.pendingRequests,
+        },
+      });
+      fireToast({
+        message: `${name} is removed from your friends list.`,
+      }).success();
+    } catch (error) {
+      console.log(error);
+      fireToast({ message: 'Something went wrong' }).error();
+      dispatch({ type: REMOVE_FRIEND_FAIL });
     }
   };

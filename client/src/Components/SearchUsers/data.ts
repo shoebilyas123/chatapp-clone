@@ -5,7 +5,7 @@ import { IFriends, IGlobalState } from '../../Interface/redux';
 import { getAuthConfig } from '../../Utilities/api';
 
 export default () => {
-  const { userAccessToken, userInfo } = useSelector(
+  const { userAccessToken, userInfo, loading } = useSelector(
     (state: IGlobalState) => state.userLogin
   );
   const [userList, setUserList] = React.useState<IFriends[]>([]);
@@ -50,6 +50,7 @@ export default () => {
 
   const reduxState = {
     userInfo,
+    loading,
   };
 
   return { state, reduxState, onSearchChange, setIsSearching, setUserList };

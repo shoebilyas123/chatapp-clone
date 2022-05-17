@@ -1,14 +1,23 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
 import { ILoginPayload, IRegisterPayload } from '../../API/auth';
-import { IAuthState, IReduxAction } from '../../Interface/redux';
-import { ILoginResponse } from '../../Interface/responses';
+import {
+  IAuthData,
+  IAuthState,
+  IGlobalState,
+  IReduxAction,
+} from '../../Interface/redux';
+import { ILoginResponse, IUpdateInfo } from '../../Interface/responses';
 import { getAuthConfig } from '../../Utilities/api';
+import { fireToast } from '../../Utilities/toast';
 import {
   LOGIN_FAIL,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGOUT,
+  UPDATE_USER_FAIL,
+  UPDATE_USER_REQUEST,
+  UPDATE_USER_SUCCESS,
   USER_INFO_FAIL,
   USER_INFO_REQUEST,
   USER_INFO_SUCCESS,
@@ -79,5 +88,36 @@ export const getMyInfo =
     } catch (error) {
       console.log(error);
       dispatch({ type: USER_INFO_FAIL });
+    }
+  };
+
+export const updateUserInfo =
+  (userInfo: IUpdateInfo) =>
+  async (
+    dispatch: Dispatch<IReduxAction<IAuthState> & { userInfo?: IAuthData }>,
+    getState: () => IGlobalState
+  ) => {
+    try {
+      dispatch({ type: UPDATE_USER_REQUEST });
+      const {
+        userLogin: { userAccessToken },
+      } = getState();
+
+      const config = getAuthConfig({ token: userAccessToken });
+      const { data } = await axios.post(
+        '/api/v1/auth/update',
+        {
+          ...userInfo,
+        },
+        config
+      );
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: { userInfo: data },
+      });
+      fireToast({ message: 'User info updated successfully' }).success();
+    } catch (error) {
+      fireToast({ message: 'Cannot update info :(' }).error();
+      dispatch({ type: UPDATE_USER_FAIL });
     }
   };

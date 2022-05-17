@@ -4,7 +4,7 @@ import { IFriends, IGlobalState } from '../../Interface/redux';
 import DefaultAvatar from '../DefaultAvatar';
 import { FiMoreVertical } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteAllChats } from '../../Store/Actions/friends';
+import { deleteAllChats, removeFriend } from '../../Store/Actions/friends';
 import { setChatInfo } from '../../Store/Actions/chats';
 import { IChatInfo } from '../../Interface/chats';
 import ProfilePic from '../Settings/ProfilePic';
@@ -71,12 +71,18 @@ const ContactItem: React.FC<IProps> = ({ friend }) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          <Dropdown.Item href="#">Archive</Dropdown.Item>
           <Dropdown.Item onClick={deleteChatsHandler}>
             Delete Chats
           </Dropdown.Item>
           <Dropdown.Divider />
-          <Dropdown.Item href="#">Remove Friend</Dropdown.Item>
+          <Dropdown.Item
+            href="#"
+            onClick={() => {
+              dispatch(removeFriend(friend._id, friend.name));
+            }}
+          >
+            Remove Friend
+          </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </ListGroup.Item>
