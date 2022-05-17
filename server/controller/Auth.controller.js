@@ -78,7 +78,8 @@ exports.getCurrentUser = expressAsyncHandler(async (req, res, next) => {
     .populate({
       path: "friends",
       select: "name avatarColor _id profilePic",
-    });
+    })
+    .select("-password");
 
   if (!user) {
     next(new AppError("User has either been deleted or does not exist.", 404));
@@ -145,4 +146,51 @@ exports.getChatsFor = expressAsyncHandler(async (req, res, next) => {
   ]);
   const chats = chatHistory[0].chatHistory;
   res.status(200).json(chats);
+});
+
+exports.removeFriend = expressAsyncHandler(async (req, res, next) => {
+  const { removeId } = req.body;
+
+  const options = {
+    $pull: { friends: removeId },
+  };
+  const user = await User.findByIdAndUpdate(req.user._id, options, {
+    new: true,
+  })
+    .populate({ path: "friends", select: "_id name profilePic avatarColor" })
+    .select("friends pendingRequests");
+  await User.findByIdAndUpdate(
+    removeId,
+    {
+      $pull: { friends: req.user._id },
+    },
+    { new: true }
+  );
+
+  res
+    .status(200)
+    .json({ friends: user.friends, pendingRequests: user.pendingRequests });
+});
+
+exports.updateUserInfo = expressAsyncHandler(async (req, res, next) => {
+  const { email, name } = req.body;
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { email, name },
+    { new: true }
+  )
+    .populate({
+      path: "sentRequests",
+      select: "name avatarColor _id profilePic",
+    })
+    .populate({
+      path: "pendingRequests",
+      select: "name avatarColor _id profilePic",
+    })
+    .populate({
+      path: "friends",
+      select: "name avatarColor _id profilePic",
+    })
+    .select("-password");
+  res.status(200).json(user);
 });

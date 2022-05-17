@@ -12,7 +12,12 @@ exports.getAllUsers = expressAsyncHandler(async (req, res) => {
     email: { $ne: req.user.email },
     ...(searchTerm && { name: new RegExp(searchTerm, "g") }),
     ...(isBoolean(forFR) &&
-      isTrue(forFR) && { pendingRequests: { $nin: [req.user._id] } }),
+      isTrue(forFR) && {
+        pendingRequests: {
+          $nin: [req.user._id],
+        },
+        friends: { $nin: [req.user._id] },
+      }),
   };
 
   const users = await User.find(options).select("-password");
@@ -46,13 +51,19 @@ exports.acceptInvite = expressAsyncHandler(async (req, res) => {
     $push: { friends: acceptId },
     $pull: { pendingRequests: acceptId },
   };
-  const user = await User.findByIdAndUpdate(req.user._id, options)
+  const user = await User.findByIdAndUpdate(req.user._id, options, {
+    new: true,
+  })
     .populate({ path: "friends", select: "_id name profilePic avatarColor" })
     .select("friends pendingRequests");
-  await User.findByIdAndUpdate(acceptId, {
-    $push: { friends: req.user._id },
-    $pull: { sentRequests: req.user._id },
-  });
+  await User.findByIdAndUpdate(
+    acceptId,
+    {
+      $push: { friends: req.user._id },
+      $pull: { sentRequests: req.user._id },
+    },
+    { new: true }
+  );
 
   res
     .status(200)
@@ -90,9 +101,8 @@ exports.deleteAllChats = expressAsyncHandler(async (req, res) => {
 });
 
 exports.uploadProfilePic = expressAsyncHandler(async (req, res) => {
-  const fileName = req.query.fileName;
+  const fileName = req.query.fileName.split(".")[0];
   const fileType = req.query.fileType.split("/")[1];
-  console.log({ fileType });
   const url = await getS3SignedURL(fileName, fileType, req.user._id);
   res.status(200).json({ url });
 });

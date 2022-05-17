@@ -14,16 +14,6 @@ const app = express();
 
 const awsURL =
   "https://shoebilyas-chats-profile-pic.s3.ap-south-1.amazonaws.com";
-
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
-
 app.use(
   cors({
     origin: "*",
@@ -38,18 +28,20 @@ app.use(xss());
 app.use(mongoSanitize());
 // Set security http headers
 app.use(
-  helmet()
-  //   {
-  //   contentSecurityPolicy: {
-  //     useDefaults: true,
-  //     directives: {
-  //       // other directives
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        // other directives
 
-  //       "img-src": ["'self'", awsURL],
-  //     },
-  //   },
-  //   // referrerPolicy: { policy: "strict-origin-when-cross-origin" },
-  // }
+        "img-src": ["'self'", awsURL],
+        "connect-src": ["'self'", awsURL],
+      },
+    },
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    //
+  })
 );
 // strict-origin-when-cross-origin
 
@@ -64,6 +56,16 @@ app.use("/api", limiter);
 
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cross-Origin-Resource-Policy", "cross-origin");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
