@@ -50,7 +50,16 @@ const Home = () => {
       <ScreenBox>
         <Container>
           <Row md={12}>
-            <Col md={4} style={{ height: '100vh', overflowY: 'auto' }}>
+            <Col
+              md={userInfo?.friends.length === 0 ? 12 : 4}
+              style={{ height: '100vh', overflowY: 'auto' }}
+              className={`${
+                userInfo?.friends.length === 0 ? 'overflow-hidden' : ''
+              }`}
+            >
+              {userInfo?.friends.length === 0 && (
+                <img src={'/empty.svg'} width="100%" height="100%" />
+              )}
               {userInfo && userInfo?.friends && (
                 <Contacts contacts={userInfo?.friends || []} />
               )}

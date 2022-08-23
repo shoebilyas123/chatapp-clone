@@ -9,6 +9,8 @@ import {
   Row,
   Spinner,
 } from 'react-bootstrap';
+import { BsCheck, BsX } from 'react-icons/bs';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ScreenBox from '../../Components/ScreenBox';
@@ -95,7 +97,14 @@ const Register = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Label>Password</Form.Label>
+                  <Form.Label>
+                    <div className="flex flex-row">
+                      <span>Password</span>
+                      {password.length >= 8 && (
+                        <BsCheck color="green" className="text-xl" />
+                      )}
+                    </div>
+                  </Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Password"

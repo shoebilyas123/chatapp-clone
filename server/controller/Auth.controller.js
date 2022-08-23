@@ -13,6 +13,14 @@ exports.register = expressAsyncHandler(async (req, res, next) => {
     return;
   }
 
+  if (name?.length < 5) {
+    return next(new AppError("Name must be 5 characters or more", 400));
+  }
+
+  if (password?.length < 8) {
+    return next(new AppError("Password must be 8 characters or more", 400));
+  }
+
   const payload = {
     name,
     email,

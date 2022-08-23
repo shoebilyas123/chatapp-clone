@@ -1,5 +1,8 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
+import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
+
 import { ILoginPayload, IRegisterPayload } from '../../API/auth';
 import {
   IAuthData,
@@ -37,6 +40,11 @@ export const login =
         type: LOGIN_SUCCESS,
         payload: data,
       });
+
+      toast.success(`Welcome back ${data.userInfo.name}!`, {
+        position: 'top-center',
+      });
+
       localStorage.setItem('userAccessToken', JSON.stringify(data.accessToken));
     } catch (error) {
       dispatch({ type: LOGIN_FAIL });
@@ -56,8 +64,10 @@ export const register =
         type: LOGIN_SUCCESS,
         payload: data,
       });
+      toast.success(`Welcome ${data.userInfo.name}`);
       localStorage.setItem('userAccessToken', JSON.stringify(data.accessToken));
     } catch (error) {
+      toast.error((error as any)?.response.data.error);
       dispatch({ type: LOGIN_FAIL });
     }
   };

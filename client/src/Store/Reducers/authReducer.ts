@@ -111,6 +111,8 @@ export default (
           friends: action.payload?.friends,
         },
       };
+    case ACCEPT_FR_FAIL:
+      return { ...state, loading: false };
     case REMOVE_FRIEND_REQUEST:
       return { ...state, loading: true };
     case REMOVE_FRIEND_SUCCESS:
@@ -128,7 +130,6 @@ export default (
     case REMOVE_FRIEND_FAIL: {
       return { ...state, loading: false, success: false };
     }
-
     case LOGOUT:
       return {};
     case SET_PROFILE_PIC:
