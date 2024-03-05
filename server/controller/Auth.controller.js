@@ -1,31 +1,31 @@
-const { signToken } = require("../utils/auth");
-const { generateAvatarColor } = require("../utils/generics");
-const User = require("./../models/user.model");
-const { createRoom } = require("../utils/socket");
-const AppError = require("./../utils/appError");
-const { expressAsyncHandler } = require("../utils/expressAsyncHandler");
+const { signToken } = require('../utils/auth');
+const { generateAvatarColor } = require('../utils/generics');
+const User = require('./../models/user.model');
+const { createRoom } = require('../utils/socket');
+const AppError = require('./../utils/appError');
+const { expressAsyncHandler } = require('../utils/expressAsyncHandler');
 
 exports.register = expressAsyncHandler(async (req, res, next) => {
   const { name, email, password, profilePic } = req.body;
 
   if (!name || !email || !password) {
-    next(new AppError("Name, email and password are mandatory", 400));
+    next(new AppError('Name, email and password are mandatory', 400));
     return;
   }
 
   if (name?.length < 5) {
-    return next(new AppError("Name must be 5 characters or more", 400));
+    return next(new AppError('Name must be 5 characters or more', 400));
   }
 
   if (password?.length < 8) {
-    return next(new AppError("Password must be 8 characters or more", 400));
+    return next(new AppError('Password must be 8 characters or more', 400));
   }
 
   const payload = {
     name,
     email,
     password,
-    profilePic: profilePic || "",
+    profilePic: profilePic || '',
     avatarColor: generateAvatarColor(),
   };
 
@@ -45,14 +45,14 @@ exports.login = expressAsyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    next(new AppError("Email and password are required", 404));
+    next(new AppError('Email and password are required', 404));
     return;
   }
 
   const userAuth = await User.findOne({ email });
 
   if (!userAuth) {
-    next(new AppError("User has either been deleted or does not exist.", 404));
+    next(new AppError('User has either been deleted or does not exist.', 404));
     return;
   }
   const isPasswordValid = await userAuth.isPasswordValid(
@@ -61,10 +61,10 @@ exports.login = expressAsyncHandler(async (req, res, next) => {
   );
 
   if (!isPasswordValid) {
-    next(new AppError("Please provide a correct password", 400));
+    next(new AppError('Please provide a correct password', 400));
     return;
   }
-  const user = await User.findOne({ email }).select("-password");
+  const user = await User.findOne({ email }).select('-password');
 
   const accessToken = signToken(user._id);
   res.status(201).json({
@@ -76,21 +76,21 @@ exports.login = expressAsyncHandler(async (req, res, next) => {
 exports.getCurrentUser = expressAsyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user._id)
     .populate({
-      path: "sentRequests",
-      select: "name avatarColor _id profilePic",
+      path: 'sentRequests',
+      select: 'name avatarColor _id profilePic',
     })
     .populate({
-      path: "pendingRequests",
-      select: "name avatarColor _id profilePic",
+      path: 'pendingRequests',
+      select: 'name avatarColor _id profilePic',
     })
     .populate({
-      path: "friends",
-      select: "name avatarColor _id profilePic",
+      path: 'friends',
+      select: 'name avatarColor _id profilePic',
     })
-    .select("-password");
+    .select('-password');
 
   if (!user) {
-    next(new AppError("User has either been deleted or does not exist.", 404));
+    next(new AppError('User has either been deleted or does not exist.', 404));
   }
 
   res.status(201).json(user);
@@ -98,9 +98,9 @@ exports.getCurrentUser = expressAsyncHandler(async (req, res, next) => {
 
 exports.changePassword = async (req, res, next) => {
   try {
-    res.send("hello");
+    res.send('hello');
   } catch (error) {
-    res.send("error");
+    res.send('error');
   }
 };
 
@@ -112,19 +112,19 @@ exports.updateProfilePic = expressAsyncHandler(async (req, res, next) => {
       profilePic: profile,
     },
     { new: true }
-  ).select("profilePic");
+  ).select('profilePic');
 
   res.status(200).json(user.profilePic);
 });
 
 exports.removeProfilePic = expressAsyncHandler(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, {
-    $set: { profile: "" },
+    $set: { profile: '' },
   });
 
   res.status(200).json({
-    status: "success",
-    message: "Profile picture removed successfully",
+    status: 'success',
+    message: 'Profile picture removed successfully',
   });
 });
 
@@ -142,10 +142,10 @@ exports.getChatsFor = expressAsyncHandler(async (req, res, next) => {
         chatHistory: 1,
         chatHistory: {
           $filter: {
-            input: "$chatHistory",
-            as: "chatMessage",
+            input: '$chatHistory',
+            as: 'chatMessage',
             cond: {
-              $eq: ["$$chatMessage.room", roomId],
+              $eq: ['$$chatMessage.room', roomId],
             },
           },
         },
@@ -165,8 +165,8 @@ exports.removeFriend = expressAsyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.user._id, options, {
     new: true,
   })
-    .populate({ path: "friends", select: "_id name profilePic avatarColor" })
-    .select("friends pendingRequests");
+    .populate({ path: 'friends', select: '_id name profilePic avatarColor' })
+    .select('friends pendingRequests');
   await User.findByIdAndUpdate(
     removeId,
     {
@@ -188,17 +188,17 @@ exports.updateUserInfo = expressAsyncHandler(async (req, res, next) => {
     { new: true }
   )
     .populate({
-      path: "sentRequests",
-      select: "name avatarColor _id profilePic",
+      path: 'sentRequests',
+      select: 'name avatarColor _id profilePic',
     })
     .populate({
-      path: "pendingRequests",
-      select: "name avatarColor _id profilePic",
+      path: 'pendingRequests',
+      select: 'name avatarColor _id profilePic',
     })
     .populate({
-      path: "friends",
-      select: "name avatarColor _id profilePic",
+      path: 'friends',
+      select: 'name avatarColor _id profilePic',
     })
-    .select("-password");
+    .select('-password');
   res.status(200).json(user);
 });

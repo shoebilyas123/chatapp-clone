@@ -21,7 +21,7 @@ const ChatBox: React.FC<IProps> = () => {
       'chat-message-container-chat-app-by-shoeb-ilyas'
     );
     chats?.scrollTo(0, chats.scrollHeight);
-  }, []);
+  }, [chats]);
 
   return (
     <Card className="m-2 ml-0" style={{ height: '90%', maxHeight: '90%' }}>
@@ -43,6 +43,7 @@ const ChatBox: React.FC<IProps> = () => {
                 minHeight: '75vh',
                 maxHeight: '75vh',
                 overflowY: 'scroll',
+                scrollBehavior: 'smooth',
               }}
               id="chat-message-container-chat-app-by-shoeb-ilyas"
             >
