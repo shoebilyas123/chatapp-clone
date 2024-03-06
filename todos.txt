@@ -1,3 +1,4 @@
+TODO: Separate module for chats
 TODO: Refactor the unoptimized code
 TODO: Migrate to ChakraUI
 TODO: Use Redis for temporary chat history

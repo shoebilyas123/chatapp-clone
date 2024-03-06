@@ -1,11 +1,20 @@
-const { signToken } = require('../utils/auth');
-const { generateAvatarColor } = require('../utils/generics');
-const User = require('./../models/user.model');
-const { createRoom } = require('../utils/socket');
-const AppError = require('./../utils/appError');
-const { expressAsyncHandler } = require('../utils/expressAsyncHandler');
+import { RequestHandler } from 'express';
 
-exports.register = expressAsyncHandler(async (req, res, next) => {
+import { signToken } from '../utils/auth';
+import { generateAvatarColor } from '../utils/generics';
+import User from './../models/user.model';
+import { createRoom } from '../utils/socket';
+import AppError from './../utils/appError';
+import { expressAsyncHandler } from '../utils/expressAsyncHandler';
+
+interface IRegisterBody {
+  name: string;
+  email: string;
+  password: string;
+  profilePic?: string;
+}
+
+export const register = expressAsyncHandler<{}>(async (req, res, next) => {
   const { name, email, password, profilePic } = req.body;
 
   if (!name || !email || !password) {
@@ -41,7 +50,7 @@ exports.register = expressAsyncHandler(async (req, res, next) => {
   });
 });
 
-exports.login = expressAsyncHandler(async (req, res, next) => {
+export const login = expressAsyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -73,7 +82,7 @@ exports.login = expressAsyncHandler(async (req, res, next) => {
   });
 });
 
-exports.getCurrentUser = expressAsyncHandler(async (req, res, next) => {
+export const getCurrentUser = expressAsyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user._id)
     .populate({
       path: 'sentRequests',
@@ -96,7 +105,7 @@ exports.getCurrentUser = expressAsyncHandler(async (req, res, next) => {
   res.status(201).json(user);
 });
 
-exports.changePassword = async (req, res, next) => {
+export const changePassword = async (req, res, next) => {
   try {
     res.send('hello');
   } catch (error) {
@@ -104,7 +113,7 @@ exports.changePassword = async (req, res, next) => {
   }
 };
 
-exports.updateProfilePic = expressAsyncHandler(async (req, res, next) => {
+export const updateProfilePic = expressAsyncHandler(async (req, res, next) => {
   const profile = req.body.profilePic;
   const user = await User.findByIdAndUpdate(
     req.user._id,
@@ -117,7 +126,7 @@ exports.updateProfilePic = expressAsyncHandler(async (req, res, next) => {
   res.status(200).json(user.profilePic);
 });
 
-exports.removeProfilePic = expressAsyncHandler(async (req, res, next) => {
+export const removeProfilePic = expressAsyncHandler(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, {
     $set: { profile: '' },
   });
@@ -128,7 +137,7 @@ exports.removeProfilePic = expressAsyncHandler(async (req, res, next) => {
   });
 });
 
-exports.getChatsFor = expressAsyncHandler(async (req, res, next) => {
+export const getChatsFor = expressAsyncHandler(async (req, res, next) => {
   const connectTo = req.params.id;
 
   const roomId = createRoom(req.user._id, connectTo);
@@ -156,7 +165,7 @@ exports.getChatsFor = expressAsyncHandler(async (req, res, next) => {
   res.status(200).json(chats);
 });
 
-exports.removeFriend = expressAsyncHandler(async (req, res, next) => {
+export const removeFriend = expressAsyncHandler(async (req, res, next) => {
   const { removeId } = req.body;
 
   const options = {
@@ -180,7 +189,7 @@ exports.removeFriend = expressAsyncHandler(async (req, res, next) => {
     .json({ friends: user.friends, pendingRequests: user.pendingRequests });
 });
 
-exports.updateUserInfo = expressAsyncHandler(async (req, res, next) => {
+export const updateUserInfo = expressAsyncHandler(async (req, res, next) => {
   const { email, name } = req.body;
   const user = await User.findByIdAndUpdate(
     req.user._id,
