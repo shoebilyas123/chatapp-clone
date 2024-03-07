@@ -7,4 +7,5 @@ export interface IChatHistory {
     sentAt: number;
   }>;
   userId: string;
+  contactId: string;
 }

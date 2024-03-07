@@ -10,13 +10,17 @@ import {
   SEND_CHAT,
   SHOW_ONLINE,
 } from './constants/socket';
-import { createRoom } from './utils/socket';
+import { createRoom } from './lib/socket';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 // Custom Type Imports
 import { IOpenChatReq } from './types';
+import RedisCli from './lib/redis';
+import chatModel from './models/chat.model';
 class IOSocket {
   private _io: Server;
+  private dbLimiter: Record<string, number>;
+  private rediscli;
 
   public get io() {
     return this._io;
@@ -24,6 +28,8 @@ class IOSocket {
 
   constructor(_server: Express.Application, _opts?: Partial<ServerOptions>) {
     this._io = new Server(_server, _opts);
+    this.dbLimiter = {};
+    this.rediscli = new RedisCli();
   }
 
   /**
@@ -53,25 +59,69 @@ class IOSocket {
       await this.showOnline(socket);
 
       // Client requests to join a a room
-      socket.on(OPEN_CHAT, async (data: IOpenChatReq) => {
-        const _roomId = createRoom(data.from, data.to);
-
+      socket.on(OPEN_CHAT, async (openChatData: IOpenChatReq) => {
+        const _roomId = createRoom(openChatData.from, openChatData.to);
+        await this.rediscli.connect();
         // Leave the previously joined room by removing the room from the list of sockets for the current io connection
         await socket.leave(Array.from(socket.rooms)[1]);
         await socket.join(_roomId);
 
-        socket.on(SEND_CHAT, async (data: { message: string }) => {
-          const message = {
-            message: data.message,
-            sentAt: Date.now(),
-            roomId: _roomId,
-          };
+        socket.on(
+          SEND_CHAT,
+          async (data: {
+            message: string;
+            sent_to: string;
+            sent_from: string;
+          }) => {
+            const message = {
+              message: data.message,
+              sentAt: Date.now(),
+              roomId: _roomId,
+            };
 
-          
-          socket
-            .to(_roomId)
-            .emit(REC_CHAT, { ...message, socketId: socket.id });
-        });
+            // Store the latest 10 chats in redis and not in DB
+            // Once the chat history exceed 10, flush the chats to the DB
+            // ChatHistory Redis Structure: {roomId: string; history: [{message: data.message,sentAt: Date.now(); }]}
+            if (!(await this.rediscli.cli.json.type(_roomId))) {
+              this.rediscli.cli.json.set(_roomId, '$', {});
+            }
+
+            if (this.dbLimiter[_roomId] < 10) {
+              await this.rediscli.cli.json.arrAppend(_roomId, '.history', {
+                message: message.message,
+                sentAt: message.sentAt,
+                from: data.sent_from,
+                to: data.sent_to,
+              });
+
+              this.dbLimiter[_roomId]++;
+            } else {
+              const temp_msgs = await this.rediscli.cli.json.get(_roomId);
+              await chatModel.findOneAndUpdate(
+                {
+                  userId: { $in: _roomId.split('|') },
+                  contactId: { $in: _roomId.split('|') },
+                },
+                {
+                  $push: {
+                    history: (temp_msgs as Record<string, any>).history,
+                  },
+                }
+              );
+              await this.rediscli.cli.json.del(_roomId);
+              this.dbLimiter[_roomId] = 0;
+            }
+
+            socket
+              .to(_roomId)
+              .emit(REC_CHAT, {
+                ...message,
+                from: data.sent_from,
+                to: data.sent_to,
+                socketId: socket.id,
+              });
+          }
+        );
 
         // Whenever socket disconnects close the connection after emitting a user disconnected event
         socket.on('disconnect', (reason) => {

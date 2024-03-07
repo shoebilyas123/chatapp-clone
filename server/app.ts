@@ -8,7 +8,7 @@ import path from 'path';
 import helmet from 'helmet';
 
 // Local imports
-import AppError from './utils/appError';
+import AppError from './lib/appError';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import chatRoutes from './routes/chat.routes';

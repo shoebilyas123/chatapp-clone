@@ -1,6 +1,6 @@
 import Chats from '../models/chat.model';
-import { expressAsyncHandler } from '../utils/expressAsyncHandler';
-import { createRoom } from '../utils/socket';
+import { expressAsyncHandler } from '../lib/expressAsyncHandler';
+import { createRoom } from '../lib/socket';
 
 // Custom type imports
 import { IChatHistory } from '../types/models/chats';

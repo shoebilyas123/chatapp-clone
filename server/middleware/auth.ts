@@ -1,7 +1,7 @@
 import { JwtPayload } from 'jsonwebtoken';
 import User from '../models/user.model';
-import { verifyToken } from '../utils/auth';
-import { expressAsyncHandler } from '../utils/expressAsyncHandler';
+import { verifyToken } from '../lib/auth';
+import { expressAsyncHandler } from '../lib/expressAsyncHandler';
 
 export const protect = expressAsyncHandler(async (req, res, next) => {
   let token = null;

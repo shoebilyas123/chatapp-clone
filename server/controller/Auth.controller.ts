@@ -1,10 +1,10 @@
 // Local imports
-import { signToken } from '../utils/auth';
-import { generateAvatarColor } from '../utils/generics';
+import { signToken } from '../lib/auth';
+import { generateAvatarColor } from '../lib/generics';
 import User from './../models/user.model';
-import AppError from './../utils/appError';
-import { expressAsyncHandler } from '../utils/expressAsyncHandler';
-import { getS3SignedURL } from '../utils/s3';
+import AppError from '../lib/appError';
+import { expressAsyncHandler } from '../lib/expressAsyncHandler';
+import { getS3SignedURL } from '../lib/s3';
 
 // Custom type imports
 import { IInviteRequests, IUser } from '../types/models/users';

@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 import { IChatHistory } from '../types/models/chats';
 
 const schema = new mongoose.Schema<IChatHistory>({
-  userId: { type: String, unique: true, required: true },
+  userId: { type: String, required: true },
+  contactId: { type: String, required: true },
   history: [
     {
       from: { type: mongoose.Types.ObjectId, required: true },

@@ -1,6 +1,6 @@
 import { ErrorRequestHandler, NextFunction, Response, Request } from 'express';
 
-import AppError from '../utils/appError';
+import AppError from '../lib/appError';
 
 const handleCastErrDB: ErrorRequestHandler = (err) => {
   const errorMessage = `Invalid ${err.path}: ${err.value}`;

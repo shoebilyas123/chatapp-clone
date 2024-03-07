@@ -3,7 +3,7 @@ import path from 'path';
 
 // Local Imports
 import { IRequestHandler, ITypedRequest, ITypedResponse } from '../types';
-import AppError from '../utils/appError';
+import AppError from '../lib/appError';
 
 /**
  * @description This request handler sends the index.html build file to the client. For production.

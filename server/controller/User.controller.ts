@@ -1,9 +1,9 @@
 import User from '../models/user.model';
 import { IInviteRequests, IUser } from '../types/models/users';
-import AppError from '../utils/appError';
-import { expressAsyncHandler } from '../utils/expressAsyncHandler';
-import { getS3SignedURL } from '../utils/s3';
-import { createRoom } from '../utils/socket';
+import AppError from '../lib/appError';
+import { expressAsyncHandler } from '../lib/expressAsyncHandler';
+import { getS3SignedURL } from '../lib/s3';
+import { createRoom } from '../lib/socket';
 
 interface IGetUsersRs extends IUser {}
 export const getAllUsers = expressAsyncHandler<
