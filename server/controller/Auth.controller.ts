@@ -1,5 +1,4 @@
-import { RequestHandler } from 'express';
-
+// Local imports
 import { signToken } from '../utils/auth';
 import { generateAvatarColor } from '../utils/generics';
 import User from './../models/user.model';

@@ -9,6 +9,10 @@ interface IENV_CONFIG {
   NODE_ENV: 'development' | 'production';
   JWT_SECRET: string;
   JWT_EXPIRES_IN: number;
+  REGION: string;
+  BUCKET_NAME: string;
+  ACCESS_KEY_ID: string;
+  SECRET_ACCESS_KEY: string;
 }
 
 /**

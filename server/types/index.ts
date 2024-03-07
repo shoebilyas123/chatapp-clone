@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
 import { Query, Send } from 'express-serve-static-core';
 
-export interface ITypedRequest<B, Q extends Query> extends Request {
-  body: B;
+export interface ITypedRequest<ReqBody, Q extends Query> extends Request {
+  body: ReqBody;
   query: Q;
 }
 
@@ -10,16 +10,16 @@ export interface ITypedResponse<ResBody> extends Response {
   json: Send<ResBody, this>;
 }
 
-export type IRequestHandler = <B, Q extends Query, IResB>(
-  _req: ITypedRequest<B, Q>,
-  _res: ITypedResponse<IResB>
-) => Promise<any>;
-
-export type IMiddleware<B, Q extends Query, IResB> = (
-  _: ITypedRequest<B, Q>,
-  _r: ITypedResponse<IResB>,
-  __n: NextFunction
-) => Promise<any>;
+export type IRequestHandler<
+  Params = {},
+  ReqBody = {},
+  ResBody = {},
+  Q extends Query = {}
+> = (
+  _req: ITypedRequest<ReqBody, Q>,
+  _res: ITypedResponse<ResBody>,
+  _next: NextFunction
+) => Promise<ResBody | void>;
 
 export interface IOpenChatReq {
   from: string;

@@ -1,3 +1,4 @@
+// NPM imports
 import express from 'express';
 import cors from 'cors';
 import mongoSanitize from 'express-mongo-sanitize';
@@ -6,10 +7,13 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import helmet from 'helmet';
 
+// Local imports
 import AppError from './utils/appError';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
+import chatRoutes from './routes/chat.routes';
 import errorController from './controller/Error.controller';
+
 const app = express();
 
 const awsURL =
@@ -68,9 +72,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/users', userRoutes);
-
+app.use('/api/v2/auth', authRoutes);
+app.use('/api/v2/users', userRoutes);
+app.use('/api/v2/chats', chatRoutes);
 app.use(errorController);
 
-module.exports = app;
+export default app;

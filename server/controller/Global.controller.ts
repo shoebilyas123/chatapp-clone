@@ -2,13 +2,8 @@
 import path from 'path';
 
 // Local Imports
-import {
-  IMiddleware,
-  IRequestHandler,
-  ITypedRequest,
-  ITypedResponse,
-} from '../types';
-import { NextFunction } from 'express';
+import { IRequestHandler, ITypedRequest, ITypedResponse } from '../types';
+import AppError from '../utils/appError';
 
 /**
  * @description This request handler sends the index.html build file to the client. For production.
@@ -16,7 +11,7 @@ import { NextFunction } from 'express';
  * @param {ITypedResponse} Response Express response object
  * @returns {any}
  */
-export const productionHandler: IRequestHandler = async (req, res) => {
+export const productionHandler: IRequestHandler = async (req, res, next) => {
   res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
 };
 
@@ -27,6 +22,6 @@ export const productionHandler: IRequestHandler = async (req, res) => {
  * @param {NextFunction} Next Express next function.
  * @returns {any}
  */
-export const globalMiddleware: IMiddleware = async (req, res, next) => {
+export const globalMiddleware: IRequestHandler = async (req, res, next) => {
   next(new AppError('Request failed to invalid URL', 404));
 };
