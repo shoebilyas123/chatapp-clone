@@ -3,9 +3,12 @@ import { RequestHandler } from 'express';
 import { signToken } from '../utils/auth';
 import { generateAvatarColor } from '../utils/generics';
 import User from './../models/user.model';
-import { createRoom } from '../utils/socket';
 import AppError from './../utils/appError';
 import { expressAsyncHandler } from '../utils/expressAsyncHandler';
+import { getS3SignedURL } from '../utils/s3';
+
+// Custom type imports
+import { IInviteRequests, IUser } from '../types/models/users';
 
 interface IRegisterBody {
   name: string;
@@ -14,7 +17,15 @@ interface IRegisterBody {
   profilePic?: string;
 }
 
-export const register = expressAsyncHandler<{}>(async (req, res, next) => {
+interface IRegisterResponse extends IUser {
+  accessToken: string;
+}
+
+export const register = expressAsyncHandler<
+  {},
+  IRegisterBody,
+  IRegisterResponse
+>(async function (req, res, next) {
   const { name, email, password, profilePic } = req.body;
 
   if (!name || !email || !password) {
@@ -39,95 +50,116 @@ export const register = expressAsyncHandler<{}>(async (req, res, next) => {
   };
 
   const newUser = await User.create(payload);
-  const accessToken = signToken(newUser._id);
+  const accessToken = signToken(newUser.id);
   res.status(201).json({
     name: newUser.name,
     email: newUser.email,
     profilePic: newUser.profilePic,
     avatarColor: newUser.avatarColor,
     accessToken,
-    id: newUser._id,
+    id: newUser.id,
   });
 });
 
-export const login = expressAsyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+interface ILoginRq {
+  email: string;
+  password: string;
+}
 
-  if (!email || !password) {
-    next(new AppError('Email and password are required', 404));
-    return;
+interface ILoginRs extends IRegisterResponse {}
+
+export const login = expressAsyncHandler<{}, ILoginRq, ILoginRs>(
+  async (req, res, next) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      next(new AppError('Email and password are required', 404));
+      return;
+    }
+
+    const userAuth = await User.findOne({ email });
+
+    if (!userAuth) {
+      next(
+        new AppError('User has either been deleted or does not exist.', 404)
+      );
+      return;
+    }
+    // @ts-ignore-next-line
+    const isPasswordValid = await userAuth.isPasswordValid(
+      userAuth.password,
+      password
+    );
+
+    if (!isPasswordValid) {
+      next(new AppError('Please provide a correct password', 400));
+      return;
+    }
+
+    const accessToken = signToken(userAuth.id);
+    res.status(201).json({
+      name: userAuth.name,
+      email: userAuth.email,
+      profilePic: userAuth.profilePic,
+      avatarColor: userAuth.avatarColor,
+      id: userAuth.id,
+      accessToken,
+    });
   }
+);
 
-  const userAuth = await User.findOne({ email });
+export const getCurrentUser = expressAsyncHandler<{}, {}, IUser>(
+  async (req, res, next) => {
+    const user = await User.findById(req.user.id)
+      .populate({
+        path: 'sentRequests',
+        select: 'name avatarColor _id profilePic',
+      })
+      .populate({
+        path: 'pendingRequests',
+        select: 'name avatarColor _id profilePic',
+      })
+      .populate({
+        path: 'friends',
+        select: 'name avatarColor _id profilePic',
+      })
+      .select('-password');
 
-  if (!userAuth) {
-    next(new AppError('User has either been deleted or does not exist.', 404));
-    return;
+    if (!user) {
+      return next(
+        new AppError('User has either been deleted or does not exist.', 404)
+      );
+    }
+
+    res.status(201).json(user);
   }
-  const isPasswordValid = await userAuth.isPasswordValid(
-    userAuth.password,
-    password
-  );
+);
 
-  if (!isPasswordValid) {
-    next(new AppError('Please provide a correct password', 400));
-    return;
-  }
-  const user = await User.findOne({ email }).select('-password');
+interface IUpdatePFPRq {
+  profilePic: IUser['profilePic'];
+}
 
-  const accessToken = signToken(user._id);
-  res.status(201).json({
-    userInfo: user,
-    accessToken,
-  });
-});
+type IUpdatePFPRs = string;
 
-export const getCurrentUser = expressAsyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user._id)
-    .populate({
-      path: 'sentRequests',
-      select: 'name avatarColor _id profilePic',
-    })
-    .populate({
-      path: 'pendingRequests',
-      select: 'name avatarColor _id profilePic',
-    })
-    .populate({
-      path: 'friends',
-      select: 'name avatarColor _id profilePic',
-    })
-    .select('-password');
-
-  if (!user) {
-    next(new AppError('User has either been deleted or does not exist.', 404));
-  }
-
-  res.status(201).json(user);
-});
-
-export const changePassword = async (req, res, next) => {
-  try {
-    res.send('hello');
-  } catch (error) {
-    res.send('error');
-  }
-};
-
-export const updateProfilePic = expressAsyncHandler(async (req, res, next) => {
+export const updateProfilePic = expressAsyncHandler<
+  {},
+  IUpdatePFPRq,
+  IUpdatePFPRs
+>(async (req, res, next) => {
   const profile = req.body.profilePic;
   const user = await User.findByIdAndUpdate(
-    req.user._id,
+    req.user.id,
     {
       profilePic: profile,
     },
     { new: true }
   ).select('profilePic');
 
-  res.status(200).json(user.profilePic);
+  res.status(200).json((user && user.profilePic) || '');
 });
 
 export const removeProfilePic = expressAsyncHandler(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.user._id, {
+  await User.findByIdAndUpdate(req.user.id, {
     $set: { profile: '' },
   });
 
@@ -137,77 +169,151 @@ export const removeProfilePic = expressAsyncHandler(async (req, res, next) => {
   });
 });
 
-export const getChatsFor = expressAsyncHandler(async (req, res, next) => {
-  const connectTo = req.params.id;
+interface IRemFrRq {
+  removeId: string;
+}
+interface IRemFrRs {
+  friends: IUser['friends'];
+}
+export const removeFriend = expressAsyncHandler<{}, IRemFrRq, IRemFrRs>(
+  async (req, res, next) => {
+    const { removeId } = req.body;
 
-  const roomId = createRoom(req.user._id, connectTo);
-
-  const chatHistory = await User.aggregate([
-    {
-      $match: { _id: req.user._id },
-    },
-    {
-      $project: {
-        chatHistory: 1,
-        chatHistory: {
-          $filter: {
-            input: '$chatHistory',
-            as: 'chatMessage',
-            cond: {
-              $eq: ['$$chatMessage.room', roomId],
-            },
-          },
-        },
-      },
-    },
-  ]);
-  const chats = chatHistory[0].chatHistory;
-  res.status(200).json(chats);
-});
-
-export const removeFriend = expressAsyncHandler(async (req, res, next) => {
-  const { removeId } = req.body;
-
-  const options = {
-    $pull: { friends: removeId },
-  };
-  const user = await User.findByIdAndUpdate(req.user._id, options, {
-    new: true,
-  })
-    .populate({ path: 'friends', select: '_id name profilePic avatarColor' })
-    .select('friends pendingRequests');
-  await User.findByIdAndUpdate(
-    removeId,
-    {
-      $pull: { friends: req.user._id },
-    },
-    { new: true }
-  );
-
-  res
-    .status(200)
-    .json({ friends: user.friends, pendingRequests: user.pendingRequests });
-});
-
-export const updateUserInfo = expressAsyncHandler(async (req, res, next) => {
-  const { email, name } = req.body;
-  const user = await User.findByIdAndUpdate(
-    req.user._id,
-    { email, name },
-    { new: true }
-  )
-    .populate({
-      path: 'sentRequests',
-      select: 'name avatarColor _id profilePic',
+    const options = {
+      $pull: { friends: removeId },
+    };
+    const user = await User.findByIdAndUpdate(req.user.id, options, {
+      new: true,
     })
+      .populate({ path: 'friends', select: '_id name profilePic avatarColor' })
+      .select('friends');
+
+    await User.findByIdAndUpdate(
+      removeId,
+      {
+        $pull: { friends: req.user.id },
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      friends: user?.friends || [],
+    });
+  }
+);
+
+interface IUpdateInfoRq {
+  email: string;
+  name: string;
+}
+
+export const updateUserInfo = expressAsyncHandler<{}, IUpdateInfoRq>(
+  async (req, res, next) => {
+    const { email, name } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { email, name },
+      { new: true }
+    ).select('-password');
+
+    res.status(200).json({ email: user?.email, name: user?.name });
+  }
+);
+
+export const uploadProfilePic = expressAsyncHandler<
+  {},
+  {},
+  {},
+  { fileName: string; fileType: string }
+>(async (req, res) => {
+  const fileName = req.query.fileName.split('.')[0];
+  const fileType = req.query.fileType.split('/')[1];
+  const url = await getS3SignedURL(fileName, fileType, req.user.id as string);
+  res.status(200).json({ url });
+});
+
+interface IInviteUserReq {
+  from: string;
+  to: string;
+}
+
+interface IInviteUserRes {
+  sent: IInviteRequests | null;
+}
+
+export const inviteUser = expressAsyncHandler<
+  {},
+  IInviteUserReq,
+  IInviteUserRes
+>(async (req, res) => {
+  const { from, to } = req.body;
+
+  const optionsTo = {
+    $push: { pendingRequests: from },
+  };
+
+  const optionsFrom = {
+    $push: { sentRequests: to },
+  };
+
+  const user = await User.findByIdAndUpdate(to, optionsTo)
+    .select('name profilePic avatarColor _id')
+    .lean();
+  await User.findByIdAndUpdate(req.user.id, optionsFrom);
+
+  const sent: IInviteRequests = {
+    _id: user?.id as string,
+    name: user?.name as string,
+    profilePic: user?.profilePic as string,
+    avatarColor: user?.avatarColor as string,
+  };
+
+  res.status(200).json({ sent: sent || null });
+});
+
+interface IAcceptInviteReq {
+  acceptId: string;
+}
+export const acceptInvite = expressAsyncHandler<{}, IAcceptInviteReq>(
+  async (req, res) => {
+    const { acceptId } = req.body;
+
+    const options = {
+      $push: { friends: acceptId },
+      $pull: { pendingRequests: acceptId },
+    };
+    const user = await User.findByIdAndUpdate(req.user.id, options, {
+      new: true,
+    })
+      .populate({ path: 'friends', select: '_id name profilePic avatarColor' })
+      .select('friends pendingRequests');
+    await User.findByIdAndUpdate(
+      acceptId,
+      {
+        $push: { friends: req.user.id },
+        $pull: { sentRequests: req.user.id },
+      },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .json({ friends: user?.friends, pendingRequests: user?.pendingRequests });
+  }
+);
+
+export const getFriendRequests = expressAsyncHandler(async (req, res) => {
+  const friendsInfo = await User.findById(req.user.id)
     .populate({
       path: 'pendingRequests',
-      select: 'name avatarColor _id profilePic',
+      select: 'name profilePic _id avatarColor',
     })
     .populate({
-      path: 'friends',
-      select: 'name avatarColor _id profilePic',
+      path: 'sentRequests',
+      select: 'name profilePic _id avatarColor',
     })
-    .select('-password');
-  res.status(200).json(user);
+    .select('pendingRequests sentRequests')
+    .lean();
+
+  res.status(200).json(friendsInfo || {});
 });
