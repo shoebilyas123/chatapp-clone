@@ -2,7 +2,7 @@
 import User from './models/user.model';
 
 // Local Imports
-import { Server, ServerOptions, Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import {
   CHAT_DISCONNECT,
   OPEN_CHAT,
@@ -11,12 +11,12 @@ import {
   SHOW_ONLINE,
 } from './constants/socket';
 import { createRoom } from './lib/socket';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 // Custom Type Imports
-import { IOpenChatReq } from './types';
+import type { IOpenChatReq } from './types';
 import RedisCli from './lib/redis';
 import chatModel from './models/chat.model';
+
 class IOSocket {
   private _io: Server;
   private dbLimiter: Record<string, number>;
@@ -26,10 +26,10 @@ class IOSocket {
     return this._io;
   }
 
-  constructor(_server: Express.Application, _opts?: Partial<ServerOptions>) {
+  constructor(_server: Express.Application, _opts?: Record<string, any>) {
     this._io = new Server(_server, _opts);
     this.dbLimiter = {};
-    this.rediscli = new RedisCli();
+    this.rediscli = RedisCli;
   }
 
   /**
@@ -38,9 +38,7 @@ class IOSocket {
    * @param userId Id of the user that requested an RTC connection
    * @returns {void}
    */
-  public async showOnline(
-    socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
-  ) {
+  public async showOnline(socket: Socket) {
     const user = await User.findById(socket.data.userId).select('friends');
     if (!user) {
       console.log('404 User Not Found');
@@ -62,8 +60,10 @@ class IOSocket {
       socket.on(OPEN_CHAT, async (openChatData: IOpenChatReq) => {
         const _roomId = createRoom(openChatData.from, openChatData.to);
         await this.rediscli.connect();
+        this.dbLimiter[_roomId] = 0;
         // Leave the previously joined room by removing the room from the list of sockets for the current io connection
-        await socket.leave(Array.from(socket.rooms)[1]);
+
+        await socket.leave(Array.from(socket.rooms)[1] as string);
         await socket.join(_roomId);
 
         socket.on(
@@ -80,13 +80,13 @@ class IOSocket {
             };
 
             // Store the latest 10 chats in redis and not in DB
-            // Once the chat history exceed 10, flush the chats to the DB
-            // ChatHistory Redis Structure: {roomId: string; history: [{message: data.message,sentAt: Date.now(); }]}
+            // Once the chat history exceed 10 for a certain room, flush the chats to the DB
+            // ChatHistory Redis Structure: {roomId: string; history: [{message: data.message,sentAt: Date.now(); from: string; to: string }]}
             if (!(await this.rediscli.cli.json.type(_roomId))) {
               this.rediscli.cli.json.set(_roomId, '$', {});
             }
 
-            if (this.dbLimiter[_roomId] < 10) {
+            if ((this.dbLimiter[_roomId] as number) < 10) {
               await this.rediscli.cli.json.arrAppend(_roomId, '.history', {
                 message: message.message,
                 sentAt: message.sentAt,
@@ -94,9 +94,10 @@ class IOSocket {
                 to: data.sent_to,
               });
 
-              this.dbLimiter[_roomId]++;
+              this.dbLimiter[_roomId] += 1;
             } else {
               const temp_msgs = await this.rediscli.cli.json.get(_roomId);
+
               await chatModel.findOneAndUpdate(
                 {
                   userId: { $in: _roomId.split('|') },
@@ -108,18 +109,17 @@ class IOSocket {
                   },
                 }
               );
+
               await this.rediscli.cli.json.del(_roomId);
               this.dbLimiter[_roomId] = 0;
             }
 
-            socket
-              .to(_roomId)
-              .emit(REC_CHAT, {
-                ...message,
-                from: data.sent_from,
-                to: data.sent_to,
-                socketId: socket.id,
-              });
+            socket.to(_roomId).emit(REC_CHAT, {
+              ...message,
+              from: data.sent_from,
+              to: data.sent_to,
+              socketId: socket.id,
+            });
           }
         );
 

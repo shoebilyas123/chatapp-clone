@@ -15,4 +15,4 @@ class RedisCli {
   }
 }
 
-export default RedisCli;
+export default new RedisCli();

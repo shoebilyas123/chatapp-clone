@@ -1,7 +1,7 @@
 // Local imports
 import { signToken } from '../lib/auth';
 import { generateAvatarColor } from '../lib/generics';
-import User from './../models/user.model';
+import User from '../models/user.model';
 import AppError from '../lib/appError';
 import { expressAsyncHandler } from '../lib/expressAsyncHandler';
 import { getS3SignedURL } from '../lib/s3';
