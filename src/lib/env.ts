@@ -28,12 +28,13 @@ export function getEnvConfig(env_loc?: string): IENV_CONFIG {
     { encoding: 'utf-8' }
   );
 
-  _envs = _env_file_content
-    .split('\n')
-    .reduce(
-      (acc, cur) => ({ ...acc, [cur.split('=')[0]]: cur.split('=')[1] }),
-      {}
-    );
+  _envs = _env_file_content.split('\n').reduce(
+    (acc, cur) => ({
+      ...acc,
+      [cur.split('=')[0] as string]: cur.split('=')[1],
+    }),
+    {}
+  );
 
   _envs = { ...(_envs as Record<any, string>), ...process.env };
 

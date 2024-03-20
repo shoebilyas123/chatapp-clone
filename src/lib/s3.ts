@@ -1,6 +1,4 @@
 import aws from 'aws-sdk';
-import dotenv from 'dotenv';
-import path from 'path';
 
 export const getS3SignedURL = async (
   fileName: string,

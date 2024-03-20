@@ -1,9 +1,16 @@
 import type { NextFunction, Request, Response } from 'express';
-import { Query, Send } from 'express-serve-static-core';
+import { IUser } from './models/users';
 
-export interface ITypedRequest<ReqBody, Q extends Query> extends Request {
+export type Send<ResBody = any, T = Response<ResBody>> = (body?: ResBody) => T;
+
+export interface ParsedQs {
+  [key: string]: undefined | string | string[] | ParsedQs | ParsedQs[];
+}
+
+export interface ITypedRequest<ReqBody, Q extends ParsedQs> extends Request {
   body: ReqBody;
   query: Q;
+  user: IUser;
 }
 
 export interface ITypedResponse<ResBody> extends Response {
@@ -14,17 +21,12 @@ export type IRequestHandler<
   Params = {},
   ReqBody = {},
   ResBody = {},
-  Q extends Query = {}
+  Q extends ParsedQs = {}
 > = (
   _req: ITypedRequest<ReqBody, Q>,
   _res: ITypedResponse<ResBody>,
   _next: NextFunction
 ) => Promise<ResBody | void>;
-
-export interface IOpenChatReq {
-  from: string;
-  to: string;
-}
 
 export interface GlobalDocWrapper {
   id?: string;

@@ -1,7 +1,8 @@
 // Global Imports
-import User from './models/user.model';
+import RedisCli from './lib/redis';
 
 // Local Imports
+import User from './models/user.model';
 import { Server, Socket } from 'socket.io';
 import {
   CHAT_DISCONNECT,
@@ -13,14 +14,23 @@ import {
 import { createRoom } from './lib/socket';
 
 // Custom Type Imports
-import type { IOpenChatReq } from './types';
-import RedisCli from './lib/redis';
 import chatModel from './models/chat.model';
+import {
+  ClientToServerEvents,
+  ITypedSocket,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from './types/socket';
 
 class IOSocket {
-  private _io: Server;
+  private _io: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >;
   private dbLimiter: Record<string, number>;
-  private rediscli;
 
   public get io() {
     return this._io;
@@ -29,7 +39,6 @@ class IOSocket {
   constructor(_server: Express.Application, _opts?: Record<string, any>) {
     this._io = new Server(_server, _opts);
     this.dbLimiter = {};
-    this.rediscli = RedisCli;
   }
 
   /**
@@ -38,7 +47,7 @@ class IOSocket {
    * @param userId Id of the user that requested an RTC connection
    * @returns {void}
    */
-  public async showOnline(socket: Socket) {
+  public async showOnline(socket: ITypedSocket) {
     const user = await User.findById(socket.data.userId).select('friends');
     if (!user) {
       console.log('404 User Not Found');
@@ -57,9 +66,9 @@ class IOSocket {
       await this.showOnline(socket);
 
       // Client requests to join a a room
-      socket.on(OPEN_CHAT, async (openChatData: IOpenChatReq) => {
+      socket.on(OPEN_CHAT, async (openChatData) => {
         const _roomId = createRoom(openChatData.from, openChatData.to);
-        await this.rediscli.connect();
+        await RedisCli.cli.connect();
         this.dbLimiter[_roomId] = 0;
         // Leave the previously joined room by removing the room from the list of sockets for the current io connection
 
@@ -82,12 +91,12 @@ class IOSocket {
             // Store the latest 10 chats in redis and not in DB
             // Once the chat history exceed 10 for a certain room, flush the chats to the DB
             // ChatHistory Redis Structure: {roomId: string; history: [{message: data.message,sentAt: Date.now(); from: string; to: string }]}
-            if (!(await this.rediscli.cli.json.type(_roomId))) {
-              this.rediscli.cli.json.set(_roomId, '$', {});
+            if (!(await RedisCli.cli.json.type(_roomId))) {
+              RedisCli.cli.json.set(_roomId, '$', {});
             }
 
             if ((this.dbLimiter[_roomId] as number) < 10) {
-              await this.rediscli.cli.json.arrAppend(_roomId, '.history', {
+              await RedisCli.cli.json.arrAppend(_roomId, '.history', {
                 message: message.message,
                 sentAt: message.sentAt,
                 from: data.sent_from,
@@ -96,7 +105,7 @@ class IOSocket {
 
               this.dbLimiter[_roomId] += 1;
             } else {
-              const temp_msgs = await this.rediscli.cli.json.get(_roomId);
+              const temp_msgs = await RedisCli.cli.json.get(_roomId);
 
               await chatModel.findOneAndUpdate(
                 {
@@ -110,7 +119,7 @@ class IOSocket {
                 }
               );
 
-              await this.rediscli.cli.json.del(_roomId);
+              await RedisCli.cli.json.del(_roomId);
               this.dbLimiter[_roomId] = 0;
             }
 
@@ -125,9 +134,9 @@ class IOSocket {
 
         // Whenever socket disconnects close the connection after emitting a user disconnected event
         socket.on('disconnect', (reason) => {
-          socket
-            .to(_roomId)
-            .emit(CHAT_DISCONNECT, { userDisconnected: socket.data.userId });
+          socket.to(_roomId).emit(CHAT_DISCONNECT, {
+            userDisconnected: socket.data.userId as string,
+          });
           socket.disconnect(true);
         });
       });

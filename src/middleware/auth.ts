@@ -2,6 +2,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import User from '../models/user.model';
 import { verifyToken } from '../lib/auth';
 import { expressAsyncHandler } from '../lib/expressAsyncHandler';
+import AppError from '../lib/appError';
 
 export const protect = expressAsyncHandler(async (req, res, next) => {
   let token = null;
@@ -11,6 +12,10 @@ export const protect = expressAsyncHandler(async (req, res, next) => {
     req.headers['authorization'].split(' ')[0] === 'Bearer'
   ) {
     token = req.headers['authorization'].split(' ')[1];
+
+    if (!token) {
+      return next(new AppError('Unauthorized: Access token not found', 401));
+    }
 
     const { id, iat, exp } = verifyToken(token) as JwtPayload;
 

@@ -6,6 +6,7 @@ declare global {
       user: IUser;
     }
   }
+
   namespace NodeJS {
     interface ProcessEnv {
       PORT: string | number;

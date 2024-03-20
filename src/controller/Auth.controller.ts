@@ -190,7 +190,7 @@ export const removeFriend = expressAsyncHandler<{}, IRemFrRq, IRemFrRs>(
     await User.findByIdAndUpdate(
       removeId,
       {
-        $pull: { friends: req.user.id },
+        $pull: { friends: req.user.id as string },
       },
       { new: true }
     );
@@ -227,7 +227,11 @@ export const uploadProfilePic = expressAsyncHandler<
 >(async (req, res) => {
   const fileName = req.query.fileName.split('.')[0];
   const fileType = req.query.fileType.split('/')[1];
-  const url = await getS3SignedURL(fileName, fileType, req.user.id as string);
+  const url = await getS3SignedURL(
+    fileName as string,
+    fileType as string,
+    req.user.id as string
+  );
   res.status(200).json({ url });
 });
 

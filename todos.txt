@@ -2,7 +2,8 @@
 [COMPLETED]: Separate module for chats
 TODO: Refactor the unoptimized code
 TODO: Migrate to ChakraUI
-TODO: Use Redis for temporary chat history
+[COMPLETED]: Setup esbuild
+[COMPLETED]: Use Redis for temporary chat history
 TODO: Use redis for storing list of online users
 TODO: Write e2e testing with cypress for frontend
 TODO: Setup the Github CI/CD pipeline

@@ -15,10 +15,10 @@ import IOSocket from './socket';
 // export const envs = getEnvConfig();
 
 async function main() {
-  dotenv.config({ path: path.join(__dirname, 'config.env') });
+  dotenv.config({ path: path.join(__dirname, './config.env') });
 
   if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '/../client/build')));
+    app.use(express.static(path.join(__dirname, './../client/build')));
     app.get('*', globalController.productionHandler);
   } else {
     app.all('*', globalController.globalMiddleware);

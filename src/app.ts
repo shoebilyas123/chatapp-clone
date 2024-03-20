@@ -72,9 +72,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/v2/auth', authRoutes);
-app.use('/api/v2/users', userRoutes);
-app.use('/api/v2/chats', chatRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/chats', chatRoutes);
 app.use(errorController);
 
 export default app;
